@@ -8,12 +8,11 @@ import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.core.setContent
 import androidx.ui.foundation.*
+import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.graphics.Color
 import androidx.ui.input.KeyboardType
 import androidx.ui.layout.*
-import androidx.ui.material.AlertDialog
 import androidx.ui.material.Button
-import androidx.ui.material.TextButton
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.Dp
 import androidx.ui.unit.dp
@@ -74,10 +73,22 @@ data class Design(
 )
 
 sealed class Component(val hasChildren: Boolean = false) {
-    data class Text(val text: String): Component()
-    data class Row(val children: List<Component>): Component(hasChildren = true)
-    data class Column(val children: List<Component>): Component(hasChildren = true)
-    data class Button(val text: String): Component()
+    data class Text(val text: String): Component() {
+        override fun meaningfulName() = "Text (${text})"
+    }
+
+    data class Row(val children: List<Component>): Component(hasChildren = true) {
+        override fun meaningfulName() = "Row (${children.size})"
+    }
+    data class Column(val children: List<Component>): Component(hasChildren = true) {
+        override fun meaningfulName() = "Column (${children.size})"
+    }
+
+    data class Button(val text: String): Component() {
+        override fun meaningfulName() = "Button ($text)"
+    }
+
+    abstract fun meaningfulName(): String
 }
 
 @Composable
@@ -87,20 +98,35 @@ fun SideBar(
         setDesign: (Design) -> Unit
 ) {
     Column(modifier = modifier
-            .drawBackground(Color.LightGray)
+            .drawBackground(Color.DarkGray)
             .padding(8.dp)
             .fillMaxHeight()
             .preferredWidthIn(maxWidth = 500.dp)
     ) {
         SceneSetter(design, setDesign)
-        Render2(layer = 0, columnScope = this, component = design.rootComponent)
+        ComponentTree(
+                modifier = Modifier.weight(1f),
+                layer = 0,
+                component = design.rootComponent
+        )
+        ComponentToolbar()
+    }
+}
+
+@Composable
+fun ComponentToolbar() {
+    Row {
+        Text(text = "Row")
+        Text(text = "Column")
+        Text(text = "Text")
+        Text(text = "Text Button")
     }
 }
 
 @Composable
 fun SceneSetter(design: Design, setDesign: (Design) -> Unit) {
     val (openDialog, setOpenDialog) = state { false }
-    Row {
+    Row(horizontalArrangement = Arrangement.Center) {
         Button(onClick = { setOpenDialog(true) }) {
            Text(text = "Width: ${design.width}")
         }
@@ -151,17 +177,37 @@ fun SizeInputDialog(
 }
 
 @Composable
-private fun Render2(layer: Int, columnScope: ColumnScope, component: Component) {
-    Text(text = "$layer: $component")
-    // TODO find a better way to do this
-    if (component.hasChildren) {
-        val newLayer = layer + 1
-        (component as? Component.Row)?.children?.forEach {
-            Render2(layer = newLayer, columnScope = columnScope, component = it)
+private fun ComponentTree(modifier: Modifier = Modifier, layer: Int, component: Component) {
+    Column(modifier = modifier) {
+        ComponentChip(
+                modifier = Modifier.padding(start = (layer * 16).dp),
+                name = component.meaningfulName()
+        )
+        // TODO find a better way to do this
+        if (component.hasChildren) {
+            val newLayer = layer + 1
+            (component as? Component.Row)?.children?.forEach {
+                ComponentTree(layer = newLayer, component = it)
+            }
+            (component as? Component.Column)?.children?.forEach {
+                ComponentTree(layer = newLayer, component = it)
+            }
         }
-        (component as? Component.Column)?.children?.forEach {
-            Render2(layer = newLayer, columnScope = columnScope, component = it)
-        }
+    }
+}
+
+// TODO learn drag and drop
+@Composable
+fun ComponentChip(modifier: Modifier = Modifier, name: String) {
+    Box(
+            modifier = modifier.padding(4.dp).fillMaxWidth(),
+            shape = RoundedCornerShape(4.dp),
+            backgroundColor = Color.LightGray
+    ) {
+        Text(
+                modifier = Modifier.padding(4.dp),
+                text = name
+        )
     }
 }
 
