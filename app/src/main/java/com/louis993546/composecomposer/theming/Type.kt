@@ -1,4 +1,4 @@
-package com.louis993546.composecomposer.ui
+package com.louis993546.composecomposer.theming
 
 import androidx.ui.material.Typography
 import androidx.ui.text.TextStyle
