@@ -5,15 +5,19 @@ sealed class Component(val hasChildren: Boolean = false) {
         override fun meaningfulName() = "Text (${text})"
     }
 
-    data class Row(val children: List<Component>): Component(hasChildren = true) {
-        override fun meaningfulName() = "Row (${children.size})"
-    }
-    data class Column(val children: List<Component>): Component(hasChildren = true) {
-        override fun meaningfulName() = "Column (${children.size})"
-    }
-
     data class Button(val text: String): Component() {
         override fun meaningfulName() = "Button ($text)"
+    }
+
+    abstract class NestedComponent : Component(hasChildren = true) {
+        abstract val children: List<Component>
+    }
+
+    data class Row(override val children: List<Component>): NestedComponent() {
+        override fun meaningfulName() = "Row (${children.size})"
+    }
+    data class Column(override val children: List<Component>): NestedComponent() {
+        override fun meaningfulName() = "Column (${children.size})"
     }
 
     abstract fun meaningfulName(): String

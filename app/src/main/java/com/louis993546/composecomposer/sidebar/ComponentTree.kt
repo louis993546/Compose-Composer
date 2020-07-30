@@ -8,19 +8,22 @@ import androidx.ui.unit.dp
 import com.louis993546.composecomposer.model.Component
 
 @Composable
-fun ComponentTree(modifier: Modifier = Modifier, layer: Int, component: Component) {
+fun ComponentTree(
+        modifier: Modifier = Modifier,
+        layer: Int = 0,
+        component: Component
+) {
     Column(modifier = modifier) {
         ComponentChip(
-                modifier = Modifier.padding(start = (layer * 16).dp),
+                modifier = Modifier.padding(
+                        start = (layer * 32).dp,
+                        bottom = 8.dp
+                ),
                 name = component.meaningfulName()
         )
-        // TODO find a better way to do this
-        if (component.hasChildren) {
+        if (component is Component.NestedComponent) {
             val newLayer = layer + 1
-            (component as? Component.Row)?.children?.forEach {
-                ComponentTree(layer = newLayer, component = it)
-            }
-            (component as? Component.Column)?.children?.forEach {
+            component.children.forEach {
                 ComponentTree(layer = newLayer, component = it)
             }
         }

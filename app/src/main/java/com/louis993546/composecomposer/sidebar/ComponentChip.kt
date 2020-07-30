@@ -13,7 +13,7 @@ import androidx.ui.unit.dp
 @Composable
 fun ComponentChip(modifier: Modifier = Modifier, name: String) {
     Box(
-            modifier = modifier.padding(4.dp).fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.medium,
             backgroundColor = MaterialTheme.colors.secondary
     ) {

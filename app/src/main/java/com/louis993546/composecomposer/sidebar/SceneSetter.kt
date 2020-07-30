@@ -17,11 +17,19 @@ import com.louis993546.composecomposer.model.Design
 fun SceneSetter(design: Design, setDesign: (Design) -> Unit) {
     val (openDialog, setOpenDialog) = state { false }
     Row(horizontalArrangement = Arrangement.Center) {
-        Button(onClick = { setOpenDialog(true) }) {
+        Button(
+                modifier = Modifier.weight(1f),
+                onClick = { setOpenDialog(true) }
+        ) {
             Text(text = "Width: ${design.width}")
         }
-        Spacer(Modifier.preferredWidth(24.dp))
-        Button(onClick = {}) {
+        Spacer(
+                Modifier.preferredWidth(24.dp)
+        )
+        Button(
+                modifier = Modifier.weight(1f),
+                onClick = {}
+        ) {
             Text(text = "Height: ${design.height}")
         }
 
