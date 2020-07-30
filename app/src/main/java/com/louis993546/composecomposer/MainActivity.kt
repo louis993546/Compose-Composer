@@ -13,6 +13,7 @@ import androidx.ui.graphics.Color
 import androidx.ui.input.KeyboardType
 import androidx.ui.layout.*
 import androidx.ui.material.Button
+import androidx.ui.material.MaterialTheme
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.Dp
 import androidx.ui.unit.dp
@@ -98,7 +99,7 @@ fun SideBar(
         setDesign: (Design) -> Unit
 ) {
     Column(modifier = modifier
-            .drawBackground(Color.DarkGray)
+            .drawBackground(MaterialTheme.colors.surface)
             .padding(8.dp)
             .fillMaxHeight()
             .preferredWidthIn(maxWidth = 500.dp)
@@ -158,7 +159,7 @@ fun SizeInputDialog(
         val (value, setValue) = state { originalValue }
         Column(
                 modifier = Modifier
-                        .drawBackground(color = Color.White)
+                        .drawBackground(color = MaterialTheme.colors.surface)
                         .fillMaxWidth()
                         .padding(16.dp)
         ) {
@@ -202,11 +203,12 @@ fun ComponentChip(modifier: Modifier = Modifier, name: String) {
     Box(
             modifier = modifier.padding(4.dp).fillMaxWidth(),
             shape = RoundedCornerShape(4.dp),
-            backgroundColor = Color.LightGray
+            backgroundColor = MaterialTheme.colors.secondary
     ) {
         Text(
                 modifier = Modifier.padding(4.dp),
-                text = name
+                text = name,
+                color = MaterialTheme.colors.onSecondary
         )
     }
 }
@@ -233,18 +235,5 @@ private fun Render(component: Component) {
             }
         }
         is Component.Button -> Button(onClick = {}) { Render(component = Component.Text(component.text)) }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    ComposeComposerTheme {
-        Greeting("Android")
     }
 }
