@@ -11,7 +11,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.louis993546.composecomposer.Node.*
 import com.louis993546.composecomposer.ui.ComposeComposerTheme
 import com.luca992.compose.image.CoilImage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,11 +31,12 @@ class MainActivity : AppCompatActivity() {
                     val page by pageFlow.collectAsState()
 //                    var tree by state<Node> { Node.EmptyNode }
                     var tree by state<Node> {
-                        Node.ColumnNode(
+                        ColumnNode(
                             children = listOf(
-                                Node.TextNode("A"),
-                                Node.TextNode("B"),
-                                Node.TextNode("C"),
+                                TextNode("A"),
+                                TextNode("B"),
+                                TextNode("C"),
+                                ImageNode("https://avatars2.githubusercontent.com/u/3873011?s=60&u=e6a8b2a51ae37038bf1c71e218f8052a55763daa&v=4")
                             )
                         )
                     }
@@ -66,12 +69,19 @@ enum class Page {
 @Composable
 fun Builder(nextPage: () -> Unit, tree: Node) {
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Compose Composer") }) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Compose Composer") },
+                actions = {
+                    // TODO save, open, and export
+                }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = nextPage) {
                 Icon(asset = vectorResource(id = R.drawable.ic_baseline_arrow_forward_24))
             }
-        }
+        },
     ) {
         Column {
             tree.summarize()
@@ -158,12 +168,12 @@ sealed class Node {
             }
         }
     }
-    
+
     data class ImageNode(
         val model: Any,
         val modifier: Modifier = Modifier,
     ) : Node() {
-        override val nodeName = "Image"
+        override val nodeName = "Image ($model)"
 
         @Composable
         override fun render() {
@@ -173,8 +183,15 @@ sealed class Node {
 
     @Composable
     fun SummarizeText(nodeName: String, children: List<Node>? = null) {
-        // TODO left arrow
-        Text(text = nodeName)
+        Row {
+            val size = Modifier.size(16.dp)
+            if (children == null) Spacer(modifier = size)
+            else Icon(
+                modifier = size.align(Alignment.CenterVertically),
+                asset = vectorResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24)
+            )
+            Text(text = nodeName, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        }
         Column(modifier = Modifier.padding(start = 8.dp)) {
             children?.forEach { child -> child.summarize() }
         }
