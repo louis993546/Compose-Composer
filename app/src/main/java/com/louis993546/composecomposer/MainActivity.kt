@@ -42,7 +42,9 @@ class MainActivity : AppCompatActivity() {
                     when (page) {
                         Page.Builder -> Builder(
                             tree = tree,
-                            nextPage = { this.pageFlow.value = Page.Renderer },
+                            nextPage = {
+                                this.pageFlow.value = Page.Renderer
+                            },
                         )
                         Page.Renderer -> Renderer(tree)
                     }
