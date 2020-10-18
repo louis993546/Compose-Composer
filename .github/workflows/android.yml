@@ -2,9 +2,9 @@ name: Android CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -17,5 +17,13 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Build with Gradle
+    - name: Build
       run: ./gradlew build
+    - name: Assemble Debug
+      run: ./gradlew assembleDebug
+    - name: Upload Debug APK
+      uses: actions/upload-artifact@v2
+      with:
+        name: Debug APK
+        path: app/build/outputs/apk/debug/app-debug.apk 
+      
