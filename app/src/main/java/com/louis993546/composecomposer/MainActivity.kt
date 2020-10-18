@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -107,17 +108,17 @@ sealed class Node {
     @Composable
     abstract fun render()
 
-    abstract val nodeName: String
+    @Composable
+    abstract fun summary()
+
     open val children: List<Node>? = null
 
     @Composable
     fun summarize() {
-        SummarizeText(nodeName = nodeName, children = children)
+        SummarizeText(children = children)
     }
 
     object EmptyNode : Node() {
-        override val nodeName = "Empty"
-
         @Composable
         override fun render() {
             Box(
@@ -127,17 +128,27 @@ sealed class Node {
                 Text("There is nothing yet. Click the plus icon to start!")
             }
         }
+
+        @Composable
+        override fun summary() {
+            Row {
+                Text("Empty")
+            }
+        }
     }
 
     data class TextNode(
         val text: String,
         val modifier: Modifier = Modifier,
     ) : Node() {
-        override val nodeName = "Text ($text)"
-
         @Composable
         override fun render() {
             Text(text = text, modifier = modifier)
+        }
+
+        @Composable
+        override fun summary() {
+            TwoTextSummary(main = "Text", secondary = text)
         }
     }
 
@@ -145,13 +156,16 @@ sealed class Node {
         val modifier: Modifier = Modifier,
         override val children: List<Node>,
     ) : Node() {
-        override val nodeName = "Row (${children.size})"
-
         @Composable
         override fun render() {
             Row(modifier) {
                 children.forEach { child -> Renderer(node = child) }
             }
+        }
+
+        @Composable
+        override fun summary() {
+            TwoTextSummary(main = "Row", secondary = "length = ${children.size}")
         }
     }
 
@@ -159,13 +173,16 @@ sealed class Node {
         val modifier: Modifier = Modifier,
         override val children: List<Node>,
     ) : Node() {
-        override val nodeName = "Column (${children.size})"
-
         @Composable
         override fun render() {
             Column(modifier) {
                 children.forEach { child -> Renderer(node = child) }
             }
+        }
+
+        @Composable
+        override fun summary() {
+            TwoTextSummary(main = "Column", secondary = "length = ${children.size}")
         }
     }
 
@@ -173,24 +190,48 @@ sealed class Node {
         val model: Any,
         val modifier: Modifier = Modifier,
     ) : Node() {
-        override val nodeName = "Image ($model)"
-
         @Composable
         override fun render() {
             CoilImage(model = model, modifier = modifier)
         }
+
+        @Composable
+        override fun summary() {
+            TwoTextSummary(main = "Image", secondary = "$model")
+        }
     }
 
     @Composable
-    fun SummarizeText(nodeName: String, children: List<Node>? = null) {
-        Row {
+    fun TwoTextSummary(main: String, secondary: String) {
+        Row(verticalAlignment = Alignment.Bottom) {
+            Text(main)
+            Text(
+                modifier = Modifier.padding(start = 4.dp),
+                text = secondary,
+                style = MaterialTheme.typography.caption,
+                color = MaterialTheme.colors.onSurface,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+            )
+        }
+    }
+
+    @Composable
+    fun SummarizeText(children: List<Node>? = null) {
+        Row(
+            modifier = Modifier
+                .padding(8.dp)
+                .clickable(onClick = {
+
+                })
+        ) {
             val size = Modifier.size(16.dp)
             if (children == null) Spacer(modifier = size)
             else Icon(
                 modifier = size.align(Alignment.CenterVertically),
                 asset = vectorResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24)
             )
-            Text(text = nodeName, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            summary()
         }
         Column(modifier = Modifier.padding(start = 8.dp)) {
             children?.forEach { child -> child.summarize() }
