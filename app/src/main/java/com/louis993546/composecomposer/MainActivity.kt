@@ -2,15 +2,18 @@ package com.louis993546.composecomposer
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.Icon
-import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.Text
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawShadow
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.louis993546.composecomposer.nodes.*
 import com.louis993546.composecomposer.ui.ComposeComposerTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,7 +24,7 @@ import timber.log.Timber
 class MainActivity : AppCompatActivity() {
     private val pageFlow = MutableStateFlow(Page.Builder)
 
-//     private val initialNode = EmptyNode
+    //     private val initialNode = EmptyNode
     private val initialNode = ScrollableColumnNode(
         children = listOf(
             TextNode("A"),
@@ -76,44 +79,37 @@ enum class Page {
 
 @Composable
 fun Builder(nextPage: () -> Unit, tree: Node) {
-    var dialogOpen by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Compose Composer") },
-                actions = {
-                    Icon(
-                        asset = vectorResource(id = R.drawable.ic_baseline_arrow_forward_24),
-                        modifier = Modifier.clickable(onClick = nextPage)
-                    )
-                }
-            )
+            TopAppBar(title = { Text("Compose Composer") })
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { dialogOpen = true },
-                text = { Text(text = "Add node") },
-                icon = { Icon(asset = vectorResource(id = R.drawable.ic_baseline_add_24)) },
+            FloatingActionButton(
+                onClick = nextPage,
+                icon = { Icon(asset = vectorResource(id = R.drawable.ic_baseline_arrow_forward_24)) },
             )
         },
     ) {
         ScrollableColumn { tree.Summarize(level = 0) }
     }
+}
 
-    if (dialogOpen) {
-        val closeDialog = { dialogOpen = false }
-        Timber.d("Dialog opening")
-        AlertDialog(
-            onDismissRequest = closeDialog,
-            title = { Text("Dialog") },
-            confirmButton = {
-                Button(onClick = closeDialog) { Text(text = "Confirm") }
-            },
-            dismissButton = {
-                Button(onClick = closeDialog) { Text(text = "Dismiss") }
-            },
-            text = { Text("Text") }
-        )
+
+
+@Composable
+fun NodeSelectionButton(
+    id: String,
+    text: String,
+    icon: Int,
+    onClick: (String) -> Unit
+) {
+    Button(
+        modifier = Modifier.padding(4.dp),
+        onClick = { onClick(id) },
+    ) {
+        Icon(vectorResource(id = icon))
+        Text(text, modifier = Modifier.padding(start = 4.dp))
     }
 }
 

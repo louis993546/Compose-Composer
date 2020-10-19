@@ -17,7 +17,11 @@ data class RowNode(
     }
 
     @Composable
-    override fun SummarizeTitle() {
-        TwoTextSummary(main = "Row", secondary = "length = ${children.size}")
+    override fun SummarizeTitle(modifier: Modifier) {
+        TwoTextSummary(
+            modifier = modifier,
+            main = "Row",
+            secondary = "length = ${children.size}"
+        )
     }
 }

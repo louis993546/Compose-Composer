@@ -1,8 +1,6 @@
 package com.louis993546.composecomposer.nodes
 
 import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.louis993546.composecomposer.Renderer
@@ -22,7 +20,11 @@ data class ScrollableColumnNode(
     }
 
         @Composable
-    override fun SummarizeTitle() {
-        TwoTextSummary(main = "Scrollable Column", secondary = "length = ${children.size}")
+    override fun SummarizeTitle(modifier: Modifier) {
+        TwoTextSummary(
+            modifier = modifier,
+            main = "Scrollable Column",
+            secondary = "length = ${children.size}"
+        )
     }
 }
