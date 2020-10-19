@@ -8,9 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
-object EmptyNode : Node() {
+object EmptyNode : NodeWithoutChildren() {
     @Composable
-    override fun render() {
+    override fun Render() {
         Box(
             modifier = Modifier.fillMaxSize(),
             alignment = Alignment.Center,
@@ -20,9 +20,7 @@ object EmptyNode : Node() {
     }
 
     @Composable
-    override fun summary() {
-        Row {
-            Text("Empty")
-        }
+    override fun SummarizeTitle() {
+        Text("Empty")
     }
 }

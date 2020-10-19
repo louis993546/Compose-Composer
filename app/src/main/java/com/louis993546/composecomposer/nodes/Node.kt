@@ -16,57 +16,81 @@ import com.louis993546.composecomposer.R
 /**
  * Node are a set of pre-define component that Compose has.
  */
-abstract class Node {
+interface Node {
     /**
      * Every Node needs to be able to render itself. The entry point is [Renderer]
      */
     @Composable
-    abstract fun render()
+    fun Render()
+
+    /**
+     * [level] = how many indentation needed
+     */
+    @Composable
+    fun Summarize(level: Int)
+}
+
+abstract class NodeWithChildren : Node {
+    abstract val children: List<Node>
 
     @Composable
-    abstract fun summary()
-
-    open val children: List<Node>? = null
+    abstract fun SummarizeTitle()
 
     @Composable
-    fun summarize() {
-        SummarizeText(children = children)
-    }
-
-    @Composable
-    fun SummarizeText(children: List<Node>? = null) {
+    override fun Summarize(level: Int) {
         Row(
             modifier = Modifier
-                .padding(8.dp)
-                .clickable(onClick = {
-
-                })
+                .padding(
+                    start = (8 * level).dp,
+                    end = 8.dp,
+                    top = 8.dp,
+                    bottom = 8.dp
+                )
+                .clickable(onClick = { })
         ) {
-            val size = Modifier.size(16.dp)
-            if (children == null) Spacer(modifier = size)
-            else Icon(
-                modifier = size.align(Alignment.CenterVertically),
+            Icon(
+                modifier = Modifier.size(16.dp).align(Alignment.CenterVertically),
                 asset = vectorResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24)
             )
-            summary()
+            SummarizeTitle()
         }
         Column(modifier = Modifier.padding(start = 8.dp)) {
-            children?.forEach { child -> child.summarize() }
+            val newLevel = level + 1
+            children.forEach { child -> child.Summarize(level = newLevel) }
         }
     }
+}
+
+abstract class NodeWithoutChildren : Node {
+    @Composable
+    abstract fun SummarizeTitle()
 
     @Composable
-    fun TwoTextSummary(main: String, secondary: String) {
-        Row(verticalAlignment = Alignment.Bottom) {
-            Text(main)
-            Text(
-                modifier = Modifier.padding(start = 4.dp),
-                text = secondary,
-                style = MaterialTheme.typography.caption,
-                color = MaterialTheme.colors.onSurface,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
+    override fun Summarize(level: Int) {
+        Box(
+            modifier = Modifier.padding(
+                start = ((8 * level) + 16).dp,
+                end = 8.dp,
+                top = 8.dp,
+                bottom = 8.dp
             )
+        ) {
+            SummarizeTitle()
         }
+    }
+}
+
+@Composable
+fun TwoTextSummary(main: String, secondary: String) {
+    Row(verticalAlignment = Alignment.Bottom) {
+        Text(main)
+        Text(
+            modifier = Modifier.padding(start = 4.dp),
+            text = secondary,
+            style = MaterialTheme.typography.caption,
+            color = MaterialTheme.colors.onSurface,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+        )
     }
 }

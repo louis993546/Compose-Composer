@@ -8,16 +8,16 @@ import com.louis993546.composecomposer.Renderer
 data class ColumnNode(
     val modifier: Modifier = Modifier,
     override val children: List<Node>,
-) : Node() {
+) : NodeWithChildren() {
     @Composable
-    override fun render() {
+    override fun Render() {
         Column(modifier) {
             children.forEach { child -> Renderer(node = child) }
         }
     }
 
     @Composable
-    override fun summary() {
+    override fun SummarizeTitle() {
         TwoTextSummary(main = "Column", secondary = "length = ${children.size}")
     }
 }

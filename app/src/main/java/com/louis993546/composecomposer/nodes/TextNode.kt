@@ -7,14 +7,14 @@ import androidx.compose.ui.Modifier
 data class TextNode(
     val text: String,
     val modifier: Modifier = Modifier,
-) : Node() {
+) : NodeWithoutChildren() {
     @Composable
-    override fun render() {
+    override fun Render() {
         Text(text = text, modifier = modifier)
     }
 
     @Composable
-    override fun summary() {
+    override fun SummarizeTitle() {
         TwoTextSummary(main = "Text", secondary = text)
     }
 }

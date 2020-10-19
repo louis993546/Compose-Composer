@@ -7,14 +7,14 @@ import com.luca992.compose.image.CoilImage
 data class ImageNode(
     val model: Any,
     val modifier: Modifier = Modifier,
-) : Node() {
+) : NodeWithoutChildren() {
     @Composable
-    override fun render() {
+    override fun Render() {
         CoilImage(model = model, modifier = modifier)
     }
 
     @Composable
-    override fun summary() {
+    override fun SummarizeTitle() {
         TwoTextSummary(main = "Image", secondary = "$model")
     }
 }
