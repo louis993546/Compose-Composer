@@ -8,16 +8,20 @@ import com.louis993546.composecomposer.Renderer
 data class RowNode(
     val modifier: Modifier = Modifier,
     override val children: List<Node>,
-) : Node() {
+) : NodeWithChildren() {
     @Composable
-    override fun render() {
+    override fun Render() {
         Row(modifier) {
             children.forEach { child -> Renderer(node = child) }
         }
     }
 
     @Composable
-    override fun summary() {
-        TwoTextSummary(main = "Row", secondary = "length = ${children.size}")
+    override fun SummarizeTitle(modifier: Modifier) {
+        TwoTextSummary(
+            modifier = modifier,
+            main = "Row",
+            secondary = "length = ${children.size}"
+        )
     }
 }
