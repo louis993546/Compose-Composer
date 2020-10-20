@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  Build and Publish Release:
+  release:
 
     runs-on: ubuntu-latest
 
