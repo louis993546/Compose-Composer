@@ -1,13 +1,11 @@
-name: Release
+name: Main
 
 on:
-  pull_request:
-    branches: [ main ] # TODO for testing only
   push:
     branches: [ main ]
 
 jobs:
-  build:
+  Build and Publish Release:
 
     runs-on: ubuntu-latest
 
