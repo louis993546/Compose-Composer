@@ -34,11 +34,35 @@ class MainActivity : ComponentActivity() {
             children = listOf(
                 Node.Text(text = "text 1"),
                 Node.Text(text = "text 2"),
+                Node.Image(
+                    url = "https://pbs.twimg.com/profile_images/1377946002473254912/h3q66L7m_400x400.png",
+                    contentDescription = "",
+                ),
                 Node.Text(text = "text 3"),
                 Node.Text(text = "text 4"),
                 Node.Row(
                     children = listOf(
                         Node.Text(text = "text 1"),
+                        Node.Column(
+                            children = listOf(
+                                Node.Text(text = "text 1"),
+                                Node.Row(
+                                    children = listOf(
+                                        Node.Text(text = "text 1"),
+                                        Node.Column(
+                                            children = listOf(
+                                                Node.Text(text = "text 1"),
+                                                Node.Row(
+                                                    children = listOf(
+                                                        Node.Text(text = "text 1"),
+                                                    )
+                                                ),
+                                            )
+                                        ),
+                                    )
+                                ),
+                            )
+                        ),
                         Node.Text(text = "text 2"),
                         Node.Text(text = "text 3"),
                     ),
@@ -66,6 +90,10 @@ class MainActivity : ComponentActivity() {
                             page = page,
                             updateNode = { newNode ->
                                 page = page.copyWithNewNode(newNode)
+                                // TODO if there is any validation,
+                                //  then maybe copyWithNewNode should return
+                                //  the new new node as well
+                                newNode
                             },
                         )
                     }
@@ -78,6 +106,9 @@ class MainActivity : ComponentActivity() {
         node = this.node.copyWithNewNode(newNode)
     )
 
+    /**
+     * TODO skip reset of the tree once a single replacement has been done
+     */
     private fun Node.copyWithNewNode(newNode: Node): Node = when {
         this.id == newNode.id -> newNode
         this is Node.Column -> this.copy(
@@ -95,7 +126,7 @@ fun Body(
     modifier: Modifier = Modifier,
     panels: List<Panel>,
     page: Page,
-    updateNode: (Node) -> Unit,
+    updateNode: (Node) -> Node,
 ) {
     var currentlySelectedNode by remember { mutableStateOf<Node?>(null) }
 
@@ -114,7 +145,9 @@ fun Body(
                 Panel.Properties -> Properties(
                     modifier = Modifier.weight(1f),
                     node = currentlySelectedNode,
-                    onNodeModified = { newNode -> updateNode(newNode) }
+                    onNodeModified = { newNode ->
+                        currentlySelectedNode = updateNode(newNode)
+                    }
                 )
             }.exhaustive
             if (index < panels.size) PanelDivider()
@@ -176,6 +209,7 @@ sealed class Node {
     data class Image(
         override val id: Id = randId(),
         val url: String,
+        val contentDescription: String,
     ) : Node()
 
     data class Row(

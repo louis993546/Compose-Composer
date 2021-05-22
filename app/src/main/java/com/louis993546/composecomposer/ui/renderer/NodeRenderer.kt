@@ -1,11 +1,13 @@
 package com.louis993546.composecomposer.ui.renderer
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.accompanist.glide.rememberGlidePainter
 import com.louis993546.composecomposer.Node
 import com.louis993546.composecomposer.util.PreviewTheme
 import com.louis993546.composecomposer.util.exhaustive
@@ -33,8 +35,9 @@ fun NodeRenderer(
 private fun ImageNode(
     node: Node.Image,
 ) {
-    Text(
-        text = "TODO image", // TODO
+    Image(
+        painter = rememberGlidePainter(request = node.url),
+        contentDescription = "",
     )
 }
 
