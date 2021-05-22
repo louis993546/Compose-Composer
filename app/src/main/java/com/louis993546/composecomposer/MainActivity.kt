@@ -17,6 +17,13 @@ import com.louis993546.composecomposer.ui.tree.Tree
 import com.louis993546.composecomposer.ui.theme.ComposeComposerTheme
 import com.louis993546.composecomposer.util.exhaustive
 import com.louis993546.composecomposer.util.randId
+import com.squareup.moshi.FromJson
+import com.squareup.moshi.JsonClass
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.ToJson
+import dev.zacsweers.moshix.sealed.annotations.DefaultNull
+import dev.zacsweers.moshix.sealed.annotations.TypeLabel
+import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
     companion object {
@@ -26,10 +33,15 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    private val moshi = Moshi.Builder()
+//        .add(DpMoshiAdapter())
+//        .add(ColorMoshiAdapter())
+        .build()
+
     private val defaultPage = Page(
-        width = 360.dp,
-        height = 640.dp,
-        backgroundColor = Color.Gray,
+        widthFloat = 360.dp.value,
+        heightFloat = 640.dp.value,
+        backgroundColorLong = Color.Gray.value.toLong(),
         node = Node.Column(
             children = listOf(
                 Node.Text(text = "text 1"),
@@ -79,7 +91,9 @@ class MainActivity : ComponentActivity() {
 
             ComposeComposerTheme {
                 Scaffold(
-                    topBar = { TopBar() }
+                    topBar = { TopBar(testOnClick = {
+                        Timber.d(moshi.adapter(Page::class.java).toJson(page))
+                    }) }
                 ) { innerPadding ->
                     Surface(
                         modifier = Modifier.padding(innerPadding),
@@ -184,9 +198,15 @@ fun PanelDivider(
 }
 
 @Composable
-fun TopBar() {
-    TopAppBar {
+fun TopBar(
+    modifier: Modifier = Modifier,
+    testOnClick: () -> Unit,
+) {
+    TopAppBar(modifier = modifier) {
         Text("Composer")
+        Button(onClick = testOnClick) {
+            Text("Serialize to logcat")
+        }
     }
 }
 
@@ -198,36 +218,50 @@ enum class Panel {
 
 typealias Id = Int
 
+@DefaultNull
+@JsonClass(generateAdapter = true, generator = "sealed:type")
 sealed class Node {
     abstract val id: Id
 
+    @TypeLabel("text")
+    @JsonClass(generateAdapter = true)
     data class Text(
         override val id: Id = randId(),
         val text: String,
     ) : Node()
 
+    @TypeLabel("image")
+    @JsonClass(generateAdapter = true)
     data class Image(
         override val id: Id = randId(),
         val url: String,
         val contentDescription: String,
     ) : Node()
 
+    @TypeLabel("row")
+    @JsonClass(generateAdapter = true)
     data class Row(
         override val id: Id = randId(),
         val children: List<Node>,
     ) : Node()
 
+    @TypeLabel("column")
+    @JsonClass(generateAdapter = true)
     data class Column(
         override val id: Id = randId(),
         val children: List<Node>,
     ) : Node()
 
+    @TypeLabel("checkbox")
+    @JsonClass(generateAdapter = true)
     data class Checkbox(
         override val id: Id = randId(),
         val text: String,
         val checked: Boolean,
     ) : Node()
 
+    @TypeLabel("radio_group")
+    @JsonClass(generateAdapter = true)
     data class RadioGroup(
         override val id: Id = randId(),
         val options: List<String>,
@@ -238,10 +272,36 @@ sealed class Node {
 /**
  * TODO border color & thickness & radius
  *   nice to have: warning/hint when border color & [backgroundColor] are too similar
+ *
+ * TODO How to get codegen to see Dp/Color with it's custom moshi adapter
  */
+@JsonClass(generateAdapter = true)
 data class Page(
-    val width: Dp,
-    val height: Dp,
-    val backgroundColor: Color,
+//    val width: Dp,
+//    val height: Dp,
+    val widthFloat: Float,
+    val heightFloat: Float,
+    val backgroundColorLong: Long,
     val node: Node,
-)
+) {
+    val width: Dp = widthFloat.dp
+    val height: Dp = heightFloat.dp
+
+    val backgroundColor: Color = Color(backgroundColorLong)
+}
+
+//class DpMoshiAdapter {
+//    @ToJson
+//    fun toJson(dp: Dp): String = dp.value.toString()
+//
+//    @FromJson
+//    fun fromJson(input: String): Dp = input.toFloat().dp
+//}
+//
+//class ColorMoshiAdapter {
+//    @ToJson
+//    fun toJson(color: Color): String = color.value.toString()
+//
+//    @FromJson
+//    fun fromJson(input: String): Color = Color(input.toLong())
+//}
