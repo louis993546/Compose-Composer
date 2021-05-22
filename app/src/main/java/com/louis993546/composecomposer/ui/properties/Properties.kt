@@ -38,9 +38,6 @@ fun Properties(
     }
 }
 
-/**
- * TODO check why
- */
 @Composable
 fun TextProperties(
     modifier: Modifier = Modifier,
