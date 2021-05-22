@@ -1,44 +1,52 @@
 package com.louis993546.composecomposer
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawShadow
-import androidx.compose.ui.platform.setContent
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import com.louis993546.composecomposer.nodes.*
-import com.louis993546.composecomposer.ui.ComposeComposerTheme
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import timber.log.Timber
+import com.louis993546.composecomposer.ui.properties.Properties
+import com.louis993546.composecomposer.ui.renderer.PageRenderer
+import com.louis993546.composecomposer.ui.tree.Tree
+import com.louis993546.composecomposer.ui.theme.ComposeComposerTheme
+import com.louis993546.composecomposer.util.exhaustive
+import com.louis993546.composecomposer.util.randId
 
-@ExperimentalCoroutinesApi
-class MainActivity : AppCompatActivity() {
-    private val pageFlow = MutableStateFlow(Page.Builder)
+class MainActivity : ComponentActivity() {
+    companion object {
+        // TODO this should be store in settings
+        private val panelOrders = listOf(
+            Panel.Tree, Panel.Renderer, Panel.Properties
+        )
+    }
 
-    //     private val initialNode = EmptyNode
-    private val initialNode = ScrollableColumnNode(
-        children = listOf(
-            TextNode("A"),
-            TextNode("B"),
-            TextNode("C"),
-            ImageNode("https://avatars2.githubusercontent.com/u/3873011?s=60&u=e6a8b2a51ae37038bf1c71e218f8052a55763daa&v=4"),
-            RowNode(
-                children = listOf(
-                    TextNode("A"),
-                    TextNode("B"),
-                    TextNode("C"),
-                    ImageNode("https://avatars2.githubusercontent.com/u/3873011?s=60&u=e6a8b2a51ae37038bf1c71e218f8052a55763daa&v=4"),
-                )
-            )
+    private val page = Page(
+        width = 360.dp,
+        height = 640.dp,
+        backgroundColor = Color.Gray,
+        node = Node.Column(
+            children = listOf(
+                Node.Text(text = "text 1", id = randId()),
+                Node.Text(text = "text 2", id = randId()),
+                Node.Text(text = "text 3", id = randId()),
+                Node.Text(text = "text 4", id = randId()),
+                Node.Row(
+                    children = listOf(
+                        Node.Text(text = "text 1", id = randId()),
+                        Node.Text(text = "text 2", id = randId()),
+                        Node.Text(text = "text 3", id = randId()),
+                    ),
+                    id = randId()
+                ),
+                Node.Checkbox(text = "Checkbox", checked = false, id = randId()),
+            ),
+            id = randId()
         )
     )
 
@@ -46,78 +54,116 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ComposeComposerTheme {
-                Surface(color = MaterialTheme.colors.background) {
-                    val page by pageFlow.collectAsState()
-                    var tree by state<Node> { initialNode }
-
-                    when (page) {
-                        Page.Builder -> Builder(
-                            tree = tree,
-                            nextPage = {
-                                this.pageFlow.value = Page.Renderer
+                Scaffold(
+                    topBar = { TopBar() }
+                ) { innerPadding ->
+                    Surface(
+                        modifier = Modifier.padding(innerPadding),
+                        color = MaterialTheme.colors.background
+                    ) {
+                        Body(
+                            panels = panelOrders,
+                            page = page,
+                            updateNode = { newNode ->
+                                // TODO update page accordingly
                             },
                         )
-                        Page.Renderer -> Renderer(tree)
                     }
                 }
             }
         }
     }
+}
 
-    override fun onBackPressed() {
-        if (pageFlow.value == Page.Renderer) {
-            pageFlow.value = Page.Builder
-        } else {
-            super.onBackPressed()
+@Composable
+fun Body(
+    modifier: Modifier = Modifier,
+    panels: List<Panel>,
+    page: Page,
+    updateNode: (Node) -> Unit,
+) {
+    var currentlySelectedNode by remember { mutableStateOf<Node?>(null) }
+
+    Row(modifier = modifier) {
+        panels.forEachIndexed { index, panel ->
+            when (panel) {
+                Panel.Tree -> Page(
+                    modifier = Modifier.weight(1f),
+                    page = page,
+                    onNodeSelected = { node -> currentlySelectedNode = node }
+                )
+                Panel.Renderer -> PageRenderer(
+                    modifier = Modifier.weight(1f),
+                    page = page,
+                )
+                Panel.Properties -> Properties(
+                    modifier = Modifier.weight(1f),
+                    node = currentlySelectedNode,
+                    onNodeModified = { newNode -> updateNode(newNode) }
+                )
+            }.exhaustive
+            if (index < panels.size) PanelDivider()
         }
     }
 }
 
-enum class Page {
-    Builder, Renderer
-}
-
 @Composable
-fun Builder(nextPage: () -> Unit, tree: Node) {
-
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("Compose Composer") })
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = nextPage,
-                icon = { Icon(asset = vectorResource(id = R.drawable.ic_baseline_arrow_forward_24)) },
-            )
-        },
-    ) {
-        ScrollableColumn { tree.Summarize(level = 0) }
-    }
-}
-
-
-
-@Composable
-fun NodeSelectionButton(
-    id: String,
-    text: String,
-    icon: Int,
-    onClick: (String) -> Unit
+fun Page(
+    modifier: Modifier = Modifier,
+    page: Page,
+    onNodeSelected: (Node) -> Unit,
 ) {
-    Button(
-        modifier = Modifier.padding(4.dp),
-        onClick = { onClick(id) },
-    ) {
-        Icon(vectorResource(id = icon))
-        Text(text, modifier = Modifier.padding(start = 4.dp))
-    }
+    Tree(
+        modifier = modifier,
+        node = page.node,
+        onNodeSelected = onNodeSelected,
+    )
 }
 
 /**
- * See [Node] for what options do you have and how will things get render
+ * Copy of [androidx.compose.material.Divider] but vertical
  */
 @Composable
-fun Renderer(node: Node) {
-    node.Render()
+fun PanelDivider(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .width(1.dp)
+            .fillMaxHeight()
+            .background(color = MaterialTheme.colors.onSurface.copy(alpha = 0.12f))
+    )
 }
 
+@Composable
+fun TopBar() {
+    TopAppBar {
+        Text("Composer")
+    }
+}
+
+enum class Panel {
+    Tree,
+    Renderer,
+    Properties
+}
+
+typealias Id = Int
+
+sealed class Node {
+    abstract val id: Id
+
+    data class Text(val text: String, override val id: Id) : Node()
+    data class Image(val url: String, override val id: Id) : Node()
+    data class Row(val children: List<Node>, override val id: Id) : Node()
+    data class Column(val children: List<Node>, override val id: Id) : Node()
+    data class Checkbox(val text: String, val checked: Boolean, override val id: Id) : Node()
+    data class RadioGroup(val options: List<String>, val selection: Int?, override val id: Id) : Node()
+}
+
+data class Page(
+    val width: Dp,
+    val height: Dp,
+    val backgroundColor: Color,
+    val node: Node,
+)
