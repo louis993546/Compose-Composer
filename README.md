@@ -9,5 +9,6 @@ Create simple Android app right from your Android tablet in GUI
 - [ ] Create Widget to quickly launch a specific page
 - [ ] Share page with other people
 
-## LICENSES
+## LICENSE
 
+MIT License. See [LICENSE] file
