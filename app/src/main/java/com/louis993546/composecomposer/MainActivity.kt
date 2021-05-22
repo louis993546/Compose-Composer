@@ -26,33 +26,33 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private val page = Page(
+    private val defaultPage = Page(
         width = 360.dp,
         height = 640.dp,
         backgroundColor = Color.Gray,
         node = Node.Column(
             children = listOf(
-                Node.Text(text = "text 1", id = randId()),
-                Node.Text(text = "text 2", id = randId()),
-                Node.Text(text = "text 3", id = randId()),
-                Node.Text(text = "text 4", id = randId()),
+                Node.Text(text = "text 1"),
+                Node.Text(text = "text 2"),
+                Node.Text(text = "text 3"),
+                Node.Text(text = "text 4"),
                 Node.Row(
                     children = listOf(
-                        Node.Text(text = "text 1", id = randId()),
-                        Node.Text(text = "text 2", id = randId()),
-                        Node.Text(text = "text 3", id = randId()),
+                        Node.Text(text = "text 1"),
+                        Node.Text(text = "text 2"),
+                        Node.Text(text = "text 3"),
                     ),
-                    id = randId()
                 ),
-                Node.Checkbox(text = "Checkbox", checked = false, id = randId()),
+                Node.Checkbox(text = "Checkbox", checked = false),
             ),
-            id = randId()
         )
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            var page by remember { mutableStateOf(defaultPage) }
+
             ComposeComposerTheme {
                 Scaffold(
                     topBar = { TopBar() }
@@ -65,13 +65,28 @@ class MainActivity : ComponentActivity() {
                             panels = panelOrders,
                             page = page,
                             updateNode = { newNode ->
-                                // TODO update page accordingly
+                                page = page.copyWithNewNode(newNode)
                             },
                         )
                     }
                 }
             }
         }
+    }
+
+    private fun Page.copyWithNewNode(newNode: Node): Page = this.copy(
+        node = this.node.copyWithNewNode(newNode)
+    )
+
+    private fun Node.copyWithNewNode(newNode: Node): Node = when {
+        this.id == newNode.id -> newNode
+        this is Node.Column -> this.copy(
+            children = this.children.map { it.copyWithNewNode(newNode) }
+        )
+        this is Node.Row -> this.copy(
+            children = this.children.map { it.copyWithNewNode(newNode) }
+        )
+        else -> this
     }
 }
 
@@ -153,14 +168,43 @@ typealias Id = Int
 sealed class Node {
     abstract val id: Id
 
-    data class Text(val text: String, override val id: Id) : Node()
-    data class Image(val url: String, override val id: Id) : Node()
-    data class Row(val children: List<Node>, override val id: Id) : Node()
-    data class Column(val children: List<Node>, override val id: Id) : Node()
-    data class Checkbox(val text: String, val checked: Boolean, override val id: Id) : Node()
-    data class RadioGroup(val options: List<String>, val selection: Int?, override val id: Id) : Node()
+    data class Text(
+        override val id: Id = randId(),
+        val text: String,
+    ) : Node()
+
+    data class Image(
+        override val id: Id = randId(),
+        val url: String,
+    ) : Node()
+
+    data class Row(
+        override val id: Id = randId(),
+        val children: List<Node>,
+    ) : Node()
+
+    data class Column(
+        override val id: Id = randId(),
+        val children: List<Node>,
+    ) : Node()
+
+    data class Checkbox(
+        override val id: Id = randId(),
+        val text: String,
+        val checked: Boolean,
+    ) : Node()
+
+    data class RadioGroup(
+        override val id: Id = randId(),
+        val options: List<String>,
+        val selection: Int?,
+    ) : Node()
 }
 
+/**
+ * TODO border color & thickness & radius
+ *   nice to have: warning/hint when border color & [backgroundColor] are too similar
+ */
 data class Page(
     val width: Dp,
     val height: Dp,

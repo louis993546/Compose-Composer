@@ -9,7 +9,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.louis993546.composecomposer.R
+import com.louis993546.composecomposer.util.PreviewTheme
 
 @Composable
 fun NodeDescription(
@@ -25,5 +28,17 @@ fun NodeDescription(
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(text)
+    }
+}
+
+@Preview
+@Composable
+fun Preview_NodeDescription() {
+    PreviewTheme {
+        NodeDescription(
+            icon = R.drawable.ic_baseline_image_24,
+            contentDescription = "",
+            text = "NodeDescription"
+        )
     }
 }

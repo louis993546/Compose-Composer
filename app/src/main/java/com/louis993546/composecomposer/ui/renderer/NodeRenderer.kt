@@ -5,7 +5,9 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.louis993546.composecomposer.Node
+import com.louis993546.composecomposer.util.PreviewTheme
 import com.louis993546.composecomposer.util.exhaustive
 
 @Composable
@@ -17,29 +19,30 @@ fun NodeRenderer(
 ) {
     Box(modifier = modifier) {
         when (node) {
-            is Node.Checkbox -> Checkbox(
-                checked = node.checked,
-                onCheckedChange = { TODO("need to modify this node, probably by propagate it back up") },
-            )
-            is Node.Column -> Column {
-                node.children.forEach { child ->
-                    NodeRenderer(node = child, columnScope = this)
-                }
-            }
-            is Node.Image -> Text(
-                text = "TODO image", // TODO
-            )
-            is Node.RadioGroup -> Text(
-                text = "TODO radio group",
-            )
-            is Node.Row -> Row {
-                node.children.forEach { child ->
-                    NodeRenderer(node = child, rowScope = this)
-                }
-            }
-            is Node.Text -> Text(
-                text = node.text,
-            )
+            is Node.Checkbox -> CheckboxNode(node = node)
+            is Node.Column -> ColumnNode(node = node)
+            is Node.Image -> ImageNode(node = node)
+            is Node.RadioGroup -> RadioGroupNode(node = node)
+            is Node.Row -> RowNode(node = node)
+            is Node.Text -> TextNode(node = node)
         }.exhaustive
     }
+}
+
+@Composable
+private fun ImageNode(
+    node: Node.Image,
+) {
+    Text(
+        text = "TODO image", // TODO
+    )
+}
+
+@Composable
+private fun RadioGroupNode(
+    node: Node.RadioGroup,
+) {
+    Text(
+        text = "TODO radio group",
+    )
 }
