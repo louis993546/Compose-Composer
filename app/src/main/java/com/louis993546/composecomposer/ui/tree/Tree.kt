@@ -38,7 +38,7 @@ fun Tree(
                     NodeDescription(
                         icon = R.drawable.ic_baseline_view_column_24,
                         contentDescription = "Row",
-                        text = "(${node.children.size})"
+                        text = "${node.children.size} items"
                     )
                     node.children.forEach { child ->
                         Tree(
