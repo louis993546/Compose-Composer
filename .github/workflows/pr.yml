@@ -16,7 +16,9 @@ jobs:
           distribution: 'adopt'
           java-version: 11
       - name: Assemble Debug
-        run: ./gradlew assembleDebug
+        run: |
+          echo $GITHUB_RUN_NUMBER
+          ./gradlew assembleDebug
       - name: Upload Debug APK to GitHub
         uses: actions/upload-artifact@v2
         with:
