@@ -1,4 +1,4 @@
-releaseFilename: Main
+name: Main
 
 on:
   push:
