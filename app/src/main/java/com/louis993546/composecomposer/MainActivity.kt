@@ -3,17 +3,20 @@ package com.louis993546.composecomposer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.louis993546.composecomposer.ui.properties.Properties
+import com.louis993546.composecomposer.ui.renderer.PageRenderer
+import com.louis993546.composecomposer.ui.tree.Tree
 import com.louis993546.composecomposer.ui.theme.ComposeComposerTheme
+import com.louis993546.composecomposer.util.exhaustive
+import com.louis993546.composecomposer.util.randId
 
 class MainActivity : ComponentActivity() {
     companion object {
@@ -29,19 +32,21 @@ class MainActivity : ComponentActivity() {
         backgroundColor = Color.Gray,
         node = Node.Column(
             children = listOf(
-                Node.Text(text = "text 1"),
-                Node.Text(text = "text 2"),
-                Node.Text(text = "text 3"),
-                Node.Text(text = "text 4"),
+                Node.Text(text = "text 1", id = randId()),
+                Node.Text(text = "text 2", id = randId()),
+                Node.Text(text = "text 3", id = randId()),
+                Node.Text(text = "text 4", id = randId()),
                 Node.Row(
                     children = listOf(
-                        Node.Text(text = "text 1"),
-                        Node.Text(text = "text 2"),
-                        Node.Text(text = "text 3"),
-                    )
+                        Node.Text(text = "text 1", id = randId()),
+                        Node.Text(text = "text 2", id = randId()),
+                        Node.Text(text = "text 3", id = randId()),
+                    ),
+                    id = randId()
                 ),
-                Node.Checkbox(text = "Checkbox", checked = false),
-            )
+                Node.Checkbox(text = "Checkbox", checked = false, id = randId()),
+            ),
+            id = randId()
         )
     )
 
@@ -56,7 +61,13 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding),
                         color = MaterialTheme.colors.background
                     ) {
-                        Body(panels = panelOrders, page = page)
+                        Body(
+                            panels = panelOrders,
+                            page = page,
+                            updateNode = { newNode ->
+                                // TODO update page accordingly
+                            },
+                        )
                     }
                 }
             }
@@ -69,51 +80,48 @@ fun Body(
     modifier: Modifier = Modifier,
     panels: List<Panel>,
     page: Page,
+    updateNode: (Node) -> Unit,
 ) {
+    var currentlySelectedNode by remember { mutableStateOf<Node?>(null) }
+
     Row(modifier = modifier) {
         panels.forEachIndexed { index, panel ->
             when (panel) {
                 Panel.Tree -> Page(
                     modifier = Modifier.weight(1f),
-                    page = page
+                    page = page,
+                    onNodeSelected = { node -> currentlySelectedNode = node }
                 )
                 Panel.Renderer -> PageRenderer(
                     modifier = Modifier.weight(1f),
-                    page = page
+                    page = page,
                 )
-                Panel.Properties -> Properties(modifier = Modifier.weight(1f))
-            }
+                Panel.Properties -> Properties(
+                    modifier = Modifier.weight(1f),
+                    node = currentlySelectedNode,
+                    onNodeModified = { newNode -> updateNode(newNode) }
+                )
+            }.exhaustive
             if (index < panels.size) PanelDivider()
         }
     }
 }
 
 @Composable
-fun PageRenderer(
-    modifier: Modifier,
-    page: Page,
-) {
-    NodeRenderer(
-        modifier = modifier
-            .background(color = page.backgroundColor)
-            .size(width = page.width, height = page.height), // TODO make it sit in the middle of the screen
-        node = page.node
-    )
-}
-
-@Composable
 fun Page(
     modifier: Modifier = Modifier,
     page: Page,
+    onNodeSelected: (Node) -> Unit,
 ) {
     Tree(
         modifier = modifier,
         node = page.node,
+        onNodeSelected = onNodeSelected,
     )
 }
 
 /**
- * Copy of [_root_ide_package_.androidx.compose.material.Divider()] but vertical
+ * Copy of [androidx.compose.material.Divider] but vertical
  */
 @Composable
 fun PanelDivider(
@@ -140,140 +148,17 @@ enum class Panel {
     Properties
 }
 
-@Composable
-fun NodeRenderer(
-    modifier: Modifier = Modifier,
-    node: Node,
-    rowScope: RowScope? = null,
-    columnScope: ColumnScope? = null
-) {
-    Box(modifier = modifier) {
-        when (node) {
-            is Node.Checkbox -> Checkbox(checked = node.checked, onCheckedChange = {
-                TODO("need to modify this node, probably by propagate it back up")
-            })
-            is Node.Column -> Column {
-                node.children.forEach { child ->
-                    NodeRenderer(node = child, columnScope = this)
-                }
-            }
-            is Node.Image -> Text(text = "TODO image") // TODO
-            is Node.RadioGroup -> Text("TODO radio group")
-            is Node.Row -> Row {
-                node.children.forEach { child ->
-                    NodeRenderer(node = child, rowScope = this)
-                }
-            }
-            is Node.Text -> Text(text = node.text)
-        }
-    }
-}
-
-/**
- * TODO
- *   - icons for each type of node instead of name in text
- */
-@Composable
-fun Tree(
-    modifier: Modifier = Modifier,
-    node: Node,
-) {
-    Box(modifier = modifier) {
-        when (node) {
-            is Node.Checkbox -> {
-                NodeDescription(
-                    icon = R.drawable.ic_baseline_check_box_outline_blank_24,
-                    contentDescription = "Check box",
-                    text = "${node.text} = ${node.checked}"
-                )
-            }
-            is Node.Column -> {
-                Column {
-                    NodeDescription(
-                        icon = R.drawable.ic_baseline_view_column_24,
-                        contentDescription = "Row",
-                        text = "(${node.children.size})"
-                    )
-                    node.children.forEach { child ->
-                        Tree(
-                            modifier = Modifier.padding(start = 16.dp),
-                            node = child,
-                        )
-                    }
-                }
-            }
-            is Node.Image -> {
-                NodeDescription(
-                    icon = R.drawable.ic_baseline_image_24,
-                    contentDescription = "Image",
-                    text = "(TODO some description)"
-                )
-            }
-            is Node.RadioGroup -> {
-                NodeDescription(
-                    icon = R.drawable.ic_baseline_radio_button_checked_24,
-                    contentDescription = "Radio Group",
-                    text = "(TODO some description)"
-                )
-            }
-            is Node.Row -> {
-                Column {
-                    NodeDescription(
-                        icon = R.drawable.ic_baseline_table_rows_24,
-                        contentDescription = "Row",
-                        text = "${node.children.size} items"
-                    )
-                    node.children.forEach { child ->
-                        Tree(
-                            modifier = Modifier.padding(start = 16.dp),
-                            node = child,
-                        )
-                    }
-                }
-            }
-            is Node.Text -> {
-                NodeDescription(
-                    icon = R.drawable.ic_baseline_text_fields_24,
-                    contentDescription = "Text",
-                    text = "${node.text}"
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun NodeDescription(
-    @DrawableRes icon: Int,
-    contentDescription: String,
-    text: String,
-) {
-    Row {
-        Icon(
-            painter = painterResource(id = icon),
-            contentDescription = contentDescription
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(text)
-    }
-}
-
-@Composable
-fun Properties(
-    modifier: Modifier = Modifier,
-) {
-    Box(modifier = modifier) {
-        Text("Properties")
-    }
-}
+typealias Id = Int
 
 sealed class Node {
-    data class Text(val text: String) : Node()
-    data class Image(val url: String) : Node()
-    data class Row(val children: List<Node>) : Node()
-    data class Column(val children: List<Node>) : Node()
-    data class Checkbox(val text: String, val checked: Boolean) : Node()
-    data class RadioGroup(val options: List<String>, val selection: Int?) : Node()
+    abstract val id: Id
+
+    data class Text(val text: String, override val id: Id) : Node()
+    data class Image(val url: String, override val id: Id) : Node()
+    data class Row(val children: List<Node>, override val id: Id) : Node()
+    data class Column(val children: List<Node>, override val id: Id) : Node()
+    data class Checkbox(val text: String, val checked: Boolean, override val id: Id) : Node()
+    data class RadioGroup(val options: List<String>, val selection: Int?, override val id: Id) : Node()
 }
 
 data class Page(
