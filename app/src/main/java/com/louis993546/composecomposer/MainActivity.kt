@@ -11,16 +11,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.louis993546.composecomposer.data.adapters.ColorMoshiAdapter
+import com.louis993546.composecomposer.data.adapters.DpMoshiAdapter
 import com.louis993546.composecomposer.ui.properties.Properties
 import com.louis993546.composecomposer.ui.renderer.PageRenderer
-import com.louis993546.composecomposer.ui.tree.Tree
 import com.louis993546.composecomposer.ui.theme.ComposeComposerTheme
+import com.louis993546.composecomposer.ui.tree.Tree
 import com.louis993546.composecomposer.util.exhaustive
 import com.louis993546.composecomposer.util.randId
-import com.squareup.moshi.FromJson
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.ToJson
+import com.squareup.moshi.*
 import dev.zacsweers.moshix.sealed.annotations.DefaultNull
 import dev.zacsweers.moshix.sealed.annotations.TypeLabel
 import timber.log.Timber
@@ -33,15 +32,16 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    @ExperimentalStdlibApi
     private val moshi = Moshi.Builder()
-//        .add(DpMoshiAdapter())
-//        .add(ColorMoshiAdapter())
+        .addAdapter(DpMoshiAdapter())
+        .addAdapter(ColorMoshiAdapter())
         .build()
 
     private val defaultPage = Page(
-        widthFloat = 360.dp.value,
-        heightFloat = 640.dp.value,
-        backgroundColorLong = Color.Gray.value.toLong(),
+        width = 360.dp,
+        height = 640.dp,
+        backgroundColor = Color.Gray,
         node = Node.Column(
             children = listOf(
                 Node.Text(text = "text 1"),
@@ -84,6 +84,7 @@ class MainActivity : ComponentActivity() {
         )
     )
 
+    @ExperimentalStdlibApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -272,36 +273,11 @@ sealed class Node {
 /**
  * TODO border color & thickness & radius
  *   nice to have: warning/hint when border color & [backgroundColor] are too similar
- *
- * TODO How to get codegen to see Dp/Color with it's custom moshi adapter
  */
 @JsonClass(generateAdapter = true)
 data class Page(
-//    val width: Dp,
-//    val height: Dp,
-    val widthFloat: Float,
-    val heightFloat: Float,
-    val backgroundColorLong: Long,
+    val width: Dp,
+    val height: Dp,
+    val backgroundColor: Color,
     val node: Node,
-) {
-    val width: Dp = widthFloat.dp
-    val height: Dp = heightFloat.dp
-
-    val backgroundColor: Color = Color(backgroundColorLong)
-}
-
-//class DpMoshiAdapter {
-//    @ToJson
-//    fun toJson(dp: Dp): String = dp.value.toString()
-//
-//    @FromJson
-//    fun fromJson(input: String): Dp = input.toFloat().dp
-//}
-//
-//class ColorMoshiAdapter {
-//    @ToJson
-//    fun toJson(color: Color): String = color.value.toString()
-//
-//    @FromJson
-//    fun fromJson(input: String): Color = Color(input.toLong())
-//}
+)
