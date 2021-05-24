@@ -1,3 +1,4 @@
+/* (C)2021 */
 package com.louis993546.composecomposer.ui.tree
 
 import androidx.annotation.DrawableRes
@@ -21,24 +22,18 @@ fun NodeDescription(
     contentDescription: String,
     text: String,
 ) {
-    Row(modifier = modifier) {
-        Icon(
-            painter = painterResource(id = icon),
-            contentDescription = contentDescription
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(text)
-    }
+  Row(modifier = modifier) {
+    Icon(painter = painterResource(id = icon), contentDescription = contentDescription)
+    Spacer(modifier = Modifier.width(4.dp))
+    Text(text)
+  }
 }
 
 @Preview
 @Composable
 fun Preview_NodeDescription() {
-    PreviewTheme {
-        NodeDescription(
-            icon = R.drawable.ic_baseline_image_24,
-            contentDescription = "",
-            text = "NodeDescription"
-        )
-    }
+  PreviewTheme {
+    NodeDescription(
+        icon = R.drawable.ic_baseline_image_24, contentDescription = "", text = "NodeDescription")
+  }
 }

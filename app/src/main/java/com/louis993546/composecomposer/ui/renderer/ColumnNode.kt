@@ -1,3 +1,4 @@
+/* (C)2021 */
 package com.louis993546.composecomposer.ui.renderer
 
 import androidx.compose.foundation.layout.Column
@@ -10,23 +11,22 @@ import com.louis993546.composecomposer.util.PreviewTheme
 fun ColumnNode(
     node: Node.Column,
 ) {
-    Column {
-        node.children.forEach { child ->
-            NodeRenderer(node = child, columnScope = this)
-        }
-    }
+  Column { node.children.forEach { child -> NodeRenderer(node = child, columnScope = this) } }
 }
 
 @Preview
 @Composable
 fun Preview_ColumnNode() {
-    PreviewTheme {
-        ColumnNode(node = Node.Column(
-            children = listOf(
-                Node.Text(text = "text 1"),
-                Node.Text(text = "text 2"),
-                Node.Text(text = "text 3"),
-            ),
-        ))
-    }
+  PreviewTheme {
+    ColumnNode(
+        node =
+            Node.Column(
+                children =
+                    listOf(
+                        Node.Text(text = "text 1"),
+                        Node.Text(text = "text 2"),
+                        Node.Text(text = "text 3"),
+                    ),
+            ))
+  }
 }

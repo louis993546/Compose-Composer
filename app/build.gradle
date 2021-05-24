@@ -2,7 +2,6 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id "org.jetbrains.kotlin.kapt"
-    id "com.diffplug.spotless" version "5.12.5"
 }
 
 android {
@@ -43,13 +42,6 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
-    }
-}
-
-spotless {
-    kotlin {
-        ktlint()
-        licenseHeader '/* (C)$YEAR */'
     }
 }
 

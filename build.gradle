@@ -16,6 +16,18 @@ buildscript {
     }
 }
 
-task clean(type: Delete) {
+plugins {
+    id "com.diffplug.spotless" version "5.12.5"
+}
+
+spotless {
+    kotlin {
+        target '**/*.kt'
+        ktfmt()
+        licenseHeader '/* (C)$YEAR */'
+    }
+}
+
+task cleanBuildDir(type: Delete) {
     delete rootProject.buildDir
 }

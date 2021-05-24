@@ -1,3 +1,4 @@
+/* (C)2021 */
 package com.louis993546.composecomposer.ui.renderer
 
 import androidx.compose.material.Checkbox
@@ -10,19 +11,21 @@ import com.louis993546.composecomposer.util.PreviewTheme
 fun CheckboxNode(
     node: Node.Checkbox,
 ) {
-    Checkbox(
-        checked = node.checked,
-        onCheckedChange = { TODO("need to modify this node, probably by propagate it back up") },
-    )
+  Checkbox(
+      checked = node.checked,
+      onCheckedChange = { TODO("need to modify this node, probably by propagate it back up") },
+  )
 }
 
 @Preview
 @Composable
 fun Preview_CheckboxNode() {
-    PreviewTheme {
-        CheckboxNode(node = Node.Checkbox(
-            text = "checkbox",
-            checked = true,
-        ))
-    }
+  PreviewTheme {
+    CheckboxNode(
+        node =
+            Node.Checkbox(
+                text = "checkbox",
+                checked = true,
+            ))
+  }
 }
