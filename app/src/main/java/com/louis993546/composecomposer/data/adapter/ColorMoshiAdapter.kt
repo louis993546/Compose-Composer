@@ -1,4 +1,4 @@
-package com.louis993546.composecomposer.data.adapters
+package com.louis993546.composecomposer.data.adapter
 
 import androidx.compose.ui.graphics.Color
 import com.squareup.moshi.JsonAdapter
