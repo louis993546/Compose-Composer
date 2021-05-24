@@ -60,4 +60,11 @@ sealed class Node {
       val options: List<String>,
       val selection: Int?,
   ) : Node()
+
+  @TypeLabel("text_button")
+  @JsonClass(generateAdapter = true)
+  data class TextButton(
+    override val id: Id = randId(),
+    val text: String,
+  ) : Node()
 }

@@ -24,68 +24,61 @@ fun Tree(
 ) {
   Box(modifier = modifier) {
     when (node) {
-      is Node.Checkbox -> {
+      is Node.Checkbox -> NodeDescription(
+          modifier = Modifier.clickable { onNodeSelected(node) },
+          icon = R.drawable.ic_baseline_check_box_outline_blank_24,
+          contentDescription = "Check box",
+          text = "${node.text} = ${node.checked}")
+      is Node.Column -> Column(
+          modifier = Modifier.clickable { onNodeSelected(node) },
+      ) {
         NodeDescription(
-            modifier = Modifier.clickable { onNodeSelected(node) },
-            icon = R.drawable.ic_baseline_check_box_outline_blank_24,
-            contentDescription = "Check box",
-            text = "${node.text} = ${node.checked}")
-      }
-      is Node.Column -> {
-        Column(
-            modifier = Modifier.clickable { onNodeSelected(node) },
-        ) {
-          NodeDescription(
-              icon = R.drawable.ic_baseline_view_column_24,
-              contentDescription = "Row",
-              text = "${node.children.size} items")
-          node.children.forEach { child ->
-            Tree(
-                modifier = Modifier.padding(start = 16.dp),
-                node = child,
-                onNodeSelected = onNodeSelected,
-            )
-          }
+            icon = R.drawable.ic_baseline_view_column_24,
+            contentDescription = "Row",
+            text = "${node.children.size} items")
+        node.children.forEach { child ->
+          Tree(
+              modifier = Modifier.padding(start = 16.dp),
+              node = child,
+              onNodeSelected = onNodeSelected,
+          )
         }
       }
-      is Node.Image -> {
+      is Node.Image -> NodeDescription(
+          modifier = Modifier.clickable { onNodeSelected(node) },
+          icon = R.drawable.ic_baseline_image_24,
+          contentDescription = "Image",
+          text = "(TODO some description)")
+      is Node.RadioGroup -> NodeDescription(
+          modifier = Modifier.clickable { onNodeSelected(node) },
+          icon = R.drawable.ic_baseline_radio_button_checked_24,
+          contentDescription = "Radio Group",
+          text = "(TODO some description)")
+      is Node.Row -> Column(
+          modifier = Modifier.clickable { onNodeSelected(node) },
+      ) {
         NodeDescription(
-            modifier = Modifier.clickable { onNodeSelected(node) },
-            icon = R.drawable.ic_baseline_image_24,
-            contentDescription = "Image",
-            text = "(TODO some description)")
-      }
-      is Node.RadioGroup -> {
-        NodeDescription(
-            modifier = Modifier.clickable { onNodeSelected(node) },
-            icon = R.drawable.ic_baseline_radio_button_checked_24,
-            contentDescription = "Radio Group",
-            text = "(TODO some description)")
-      }
-      is Node.Row -> {
-        Column(
-            modifier = Modifier.clickable { onNodeSelected(node) },
-        ) {
-          NodeDescription(
-              icon = R.drawable.ic_baseline_table_rows_24,
-              contentDescription = "Row",
-              text = "${node.children.size} items")
-          node.children.forEach { child ->
-            Tree(
-                modifier = Modifier.padding(start = 16.dp),
-                node = child,
-                onNodeSelected = onNodeSelected,
-            )
-          }
+            icon = R.drawable.ic_baseline_table_rows_24,
+            contentDescription = "Row",
+            text = "${node.children.size} items")
+        node.children.forEach { child ->
+          Tree(
+              modifier = Modifier.padding(start = 16.dp),
+              node = child,
+              onNodeSelected = onNodeSelected,
+          )
         }
       }
-      is Node.Text -> {
-        NodeDescription(
-            modifier = Modifier.clickable { onNodeSelected(node) },
-            icon = R.drawable.ic_baseline_text_fields_24,
-            contentDescription = "Text",
-            text = node.text)
-      }
+      is Node.Text -> NodeDescription(
+          modifier = Modifier.clickable { onNodeSelected(node) },
+          icon = R.drawable.ic_baseline_text_fields_24,
+          contentDescription = "Text",
+          text = node.text)
+      is Node.TextButton -> NodeDescription(
+          icon = R.drawable.ic_baseline_touch_app_24,
+          contentDescription = "Text Button",
+          text = node.text
+      )
     }.exhaustive
   }
 }

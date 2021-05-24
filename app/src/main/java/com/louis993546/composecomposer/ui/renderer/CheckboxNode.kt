@@ -13,7 +13,7 @@ fun CheckboxNode(
 ) {
   Checkbox(
       checked = node.checked,
-      onCheckedChange = { TODO("need to modify this node, probably by propagate it back up") },
+      onCheckedChange = { },
   )
 }
 
