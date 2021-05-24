@@ -13,7 +13,7 @@ fun CheckboxNode(
 ) {
   Checkbox(
       checked = node.checked,
-      onCheckedChange = { },
+      onCheckedChange = {},
   )
 }
 

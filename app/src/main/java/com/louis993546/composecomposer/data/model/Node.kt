@@ -64,7 +64,7 @@ sealed class Node {
   @TypeLabel("text_button")
   @JsonClass(generateAdapter = true)
   data class TextButton(
-    override val id: Id = randId(),
-    val text: String,
+      override val id: Id = randId(),
+      val text: String,
   ) : Node()
 }

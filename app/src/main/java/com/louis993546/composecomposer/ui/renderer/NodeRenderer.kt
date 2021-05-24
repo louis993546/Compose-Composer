@@ -33,7 +33,7 @@ fun NodeRenderer(
 
 @Composable
 private fun TextButtonNode(
-  node: Node.TextButton,
+    node: Node.TextButton,
 ) {
   Button(
       onClick = {},
