@@ -31,7 +31,7 @@ jobs:
           distribution: 'adopt'
           java-version: 11
       - name: Spotless
-        run: ./gradlew :app:spotlessCheck
+        run: ./gradlew spotlessCheck
   unit-tests:
     runs-on: ubuntu-latest
     steps:
