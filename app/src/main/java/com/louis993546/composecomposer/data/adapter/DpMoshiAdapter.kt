@@ -1,4 +1,4 @@
-package com.louis993546.composecomposer.data.adapters
+package com.louis993546.composecomposer.data.adapter
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp

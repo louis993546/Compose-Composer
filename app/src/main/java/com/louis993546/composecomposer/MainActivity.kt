@@ -1,5 +1,6 @@
 package com.louis993546.composecomposer
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,10 +10,12 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.louis993546.composecomposer.data.adapters.ColorMoshiAdapter
-import com.louis993546.composecomposer.data.adapters.DpMoshiAdapter
+import com.louis993546.composecomposer.data.adapter.ColorMoshiAdapter
+import com.louis993546.composecomposer.data.adapter.DpMoshiAdapter
+import com.louis993546.composecomposer.data.model.Node
+import com.louis993546.composecomposer.data.model.Page
 import com.louis993546.composecomposer.ui.properties.Properties
 import com.louis993546.composecomposer.ui.renderer.PageRenderer
 import com.louis993546.composecomposer.ui.theme.ComposeComposerTheme
@@ -20,8 +23,6 @@ import com.louis993546.composecomposer.ui.tree.Tree
 import com.louis993546.composecomposer.util.exhaustive
 import com.louis993546.composecomposer.util.randId
 import com.squareup.moshi.*
-import dev.zacsweers.moshix.sealed.annotations.DefaultNull
-import dev.zacsweers.moshix.sealed.annotations.TypeLabel
 import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
@@ -39,6 +40,8 @@ class MainActivity : ComponentActivity() {
         .build()
 
     private val defaultPage = Page(
+        id = randId(),
+        name = "",
         width = 360.dp,
         height = 640.dp,
         backgroundColor = Color.Gray,
@@ -145,13 +148,41 @@ fun Body(
 ) {
     var currentlySelectedNode by remember { mutableStateOf<Node?>(null) }
 
+    val config = LocalConfiguration.current
+    when {
+        config.isPhoneSize() -> Text("TODO", modifier = modifier)
+        config.isPhabletSize() -> Text("TODO", modifier = modifier)
+        config.isTabletSize() -> TabletBody(
+            modifier = modifier,
+            panels = panels,
+            page = page,
+            currentlySelectedNode = currentlySelectedNode,
+            onNodeSelected = { node -> currentlySelectedNode = node },
+            onNodeModified = { newNode ->
+                currentlySelectedNode = updateNode(newNode)
+            }
+        )
+    }
+
+
+}
+
+@Composable
+fun TabletBody(
+    modifier: Modifier = Modifier,
+    panels: List<Panel>,
+    page: Page,
+    currentlySelectedNode: Node?,
+    onNodeSelected: (Node) -> Unit,
+    onNodeModified: (Node) -> Unit,
+) {
     Row(modifier = modifier) {
         panels.forEachIndexed { index, panel ->
             when (panel) {
                 Panel.Tree -> Page(
                     modifier = Modifier.weight(1f),
                     page = page,
-                    onNodeSelected = { node -> currentlySelectedNode = node }
+                    onNodeSelected = onNodeSelected,
                 )
                 Panel.Renderer -> PageRenderer(
                     modifier = Modifier.weight(1f),
@@ -160,15 +191,19 @@ fun Body(
                 Panel.Properties -> Properties(
                     modifier = Modifier.weight(1f),
                     node = currentlySelectedNode,
-                    onNodeModified = { newNode ->
-                        currentlySelectedNode = updateNode(newNode)
-                    }
+                    onNodeModified = onNodeModified,
                 )
             }.exhaustive
             if (index < panels.size) PanelDivider()
         }
     }
 }
+
+private fun Configuration.isPhoneSize(): Boolean = screenWidthDp <= 411
+
+private fun Configuration.isPhabletSize(): Boolean = screenWidthDp <= 800
+
+private fun Configuration.isTabletSize(): Boolean = screenWidthDp > 800
 
 @Composable
 fun Page(
@@ -217,67 +252,3 @@ enum class Panel {
     Properties
 }
 
-typealias Id = Int
-
-@DefaultNull
-@JsonClass(generateAdapter = true, generator = "sealed:type")
-sealed class Node {
-    abstract val id: Id
-
-    @TypeLabel("text")
-    @JsonClass(generateAdapter = true)
-    data class Text(
-        override val id: Id = randId(),
-        val text: String,
-    ) : Node()
-
-    @TypeLabel("image")
-    @JsonClass(generateAdapter = true)
-    data class Image(
-        override val id: Id = randId(),
-        val url: String,
-        val contentDescription: String,
-    ) : Node()
-
-    @TypeLabel("row")
-    @JsonClass(generateAdapter = true)
-    data class Row(
-        override val id: Id = randId(),
-        val children: List<Node>,
-    ) : Node()
-
-    @TypeLabel("column")
-    @JsonClass(generateAdapter = true)
-    data class Column(
-        override val id: Id = randId(),
-        val children: List<Node>,
-    ) : Node()
-
-    @TypeLabel("checkbox")
-    @JsonClass(generateAdapter = true)
-    data class Checkbox(
-        override val id: Id = randId(),
-        val text: String,
-        val checked: Boolean,
-    ) : Node()
-
-    @TypeLabel("radio_group")
-    @JsonClass(generateAdapter = true)
-    data class RadioGroup(
-        override val id: Id = randId(),
-        val options: List<String>,
-        val selection: Int?,
-    ) : Node()
-}
-
-/**
- * TODO border color & thickness & radius
- *   nice to have: warning/hint when border color & [backgroundColor] are too similar
- */
-@JsonClass(generateAdapter = true)
-data class Page(
-    val width: Dp,
-    val height: Dp,
-    val backgroundColor: Color,
-    val node: Node,
-)

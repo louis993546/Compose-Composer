@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.louis993546.composecomposer.Node
+import com.louis993546.composecomposer.data.model.Node
 import com.louis993546.composecomposer.R
 import com.louis993546.composecomposer.util.exhaustive
 
