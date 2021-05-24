@@ -27,9 +27,14 @@ detekt {
     reports {
         html.enabled = true
         xml.enabled = true
-        sarif.enabled = true
+        sarif {
+            enabled = true
+            destination = file("build/reports/detekt.sarif")
+        }
     }
 }
+
+tasks.detekt.jvmTarget = "1.8"
 
 task clean(type: Delete) {
     delete rootProject.buildDir
