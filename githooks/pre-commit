@@ -1,2 +1,3 @@
 #!/bin/sh
-./gradlew detekt
+# Skip build scan because it's just detekt
+./gradlew detekt -PrunBuildScan=false
