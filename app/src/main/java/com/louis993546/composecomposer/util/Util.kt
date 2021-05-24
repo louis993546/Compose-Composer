@@ -14,17 +14,18 @@ import kotlin.random.Random
 @Suppress("DeprecatedCallableAddReplaceWith")
 @Deprecated(
     message =
-        "This is only for development purpose. There will be separate id generator to allow" +
-            "generating unique id in specific context (e.g. no id collision in node)")
+    "This is only for development purpose. There will be separate id generator to allow" +
+            "generating unique id in specific context (e.g. no id collision in node)",
+)
 fun randId(): Id = Id(Random.nextInt())
 
 val <T> T.exhaustive: T
-  get() = this
+    get() = this
 
 /** It's just the normal theme ([ComposeComposerTheme]) with a border around it */
 @Composable
 fun PreviewTheme(
     content: @Composable () -> Unit,
 ) {
-  Box(Modifier.border(2.dp, Color.Black)) { ComposeComposerTheme(content = content) }
+    Box(Modifier.border(2.dp, Color.Black)) { ComposeComposerTheme(content = content) }
 }

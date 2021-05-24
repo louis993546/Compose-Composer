@@ -11,21 +11,23 @@ import com.louis993546.composecomposer.util.PreviewTheme
 fun RowNode(
     node: Node.Row,
 ) {
-  Row { node.children.forEach { child -> NodeRenderer(node = child, rowScope = this) } }
+    Row { node.children.forEach { child -> NodeRenderer(node = child, rowScope = this) } }
 }
 
 @Preview
 @Composable
 fun Preview_RowNode() {
-  PreviewTheme {
-    RowNode(
-        node =
+    PreviewTheme {
+        RowNode(
+            node =
             Node.Row(
                 children =
-                    listOf(
-                        Node.Text(text = "text 1"),
-                        Node.Text(text = "text 2"),
-                        Node.Text(text = "text 3"),
-                    )))
-  }
+                listOf(
+                    Node.Text(text = "text 1"),
+                    Node.Text(text = "text 2"),
+                    Node.Text(text = "text 3"),
+                ),
+            ),
+        )
+    }
 }

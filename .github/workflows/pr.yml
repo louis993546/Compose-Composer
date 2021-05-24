@@ -22,7 +22,7 @@ jobs:
         with:
           name: Debug APK
           path: app/build/outputs/apk/debug/app-debug.apk
-  spotless:
+  detekt:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -30,8 +30,8 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: 11
-      - name: Spotless
-        run: ./gradlew spotlessCheck
+      - name: Detekt
+        run: ./gradlew detekt
   unit-tests:
     runs-on: ubuntu-latest
     steps:

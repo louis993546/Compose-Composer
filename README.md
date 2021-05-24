@@ -13,8 +13,9 @@ Create simple Android app right from your Android tablet in GUI
 
 1. Clone this repo
 1. Open with Android Studio Canary (preferably the latest one)
-1. Setup pre-commit hook by running `git config core.hooksPath ./githooks`
-    It will fail the commit if something is not formatted. Just run the "Spotless Apply" run configuration and you should be good to go
+1. Setup pre-commit hook (Runs detekt) by running 
+   Unix: `git config core.hooksPath ./githooks`
+   Windows: `git config core.hooksPath .\githooks`
 1. Run (currently things only show up in tablet size devices)
 
 ## LICENSE

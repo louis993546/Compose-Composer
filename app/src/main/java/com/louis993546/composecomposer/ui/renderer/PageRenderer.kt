@@ -28,19 +28,24 @@ fun PageRenderer(
     modifier: Modifier,
     page: Page,
 ) {
-  var scale by remember { mutableStateOf(1f) }
-  val zoomState = rememberTransformableState { zoomChange, _, _ -> scale *= zoomChange }
-  Column(modifier = modifier.widthIn(min = (page.width + 16.dp)).fillMaxHeight()) {
-    Text(text = "Scale: ${"%.2f".format(scale)}")
+    var scale by remember { mutableStateOf(1f) }
+    val zoomState = rememberTransformableState { zoomChange, _, _ -> scale *= zoomChange }
+    Column(
+        modifier = modifier
+          .widthIn(min = (page.width + 16.dp))
+          .fillMaxHeight()
+    ) {
+        Text(text = "Scale: ${"%.2f".format(scale)}")
 
-    NodeRenderer(
-        modifier =
-            Modifier.graphicsLayer(scaleX = scale, scaleY = scale)
-                .transformable(zoomState)
-                .size(width = page.width, height = page.height)
-                .align(Alignment.CenterHorizontally)
-                .background(color = page.backgroundColor),
-        node = page.node,
-    )
-  }
+        NodeRenderer(
+            modifier =
+            Modifier
+              .graphicsLayer(scaleX = scale, scaleY = scale)
+              .transformable(zoomState)
+              .size(width = page.width, height = page.height)
+              .align(Alignment.CenterHorizontally)
+              .background(color = page.backgroundColor),
+            node = page.node,
+        )
+    }
 }
