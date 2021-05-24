@@ -1,2 +1,2 @@
 #!/bin/sh
-./gradlew :app:spotlessApply
+./gradlew spotlessCheck
