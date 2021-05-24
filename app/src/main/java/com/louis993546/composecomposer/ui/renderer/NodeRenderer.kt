@@ -3,6 +3,7 @@ package com.louis993546.composecomposer.ui.renderer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,8 +26,19 @@ fun NodeRenderer(
       is Node.RadioGroup -> RadioGroupNode(node = node)
       is Node.Row -> RowNode(node = node)
       is Node.Text -> TextNode(node = node)
+      is Node.TextButton -> TextButtonNode(node = node)
     }.exhaustive
   }
+}
+
+@Composable
+private fun TextButtonNode(
+    node: Node.TextButton,
+) {
+  Button(
+      onClick = {},
+      content = { Text(text = node.text) },
+  )
 }
 
 @Composable

@@ -24,6 +24,7 @@ import com.louis993546.composecomposer.ui.tree.Tree
 import com.louis993546.composecomposer.util.exhaustive
 import com.louis993546.composecomposer.util.randId
 import com.squareup.moshi.*
+import kotlin.time.measureTimedValue
 import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
@@ -55,6 +56,7 @@ class MainActivity : ComponentActivity() {
                               contentDescription = "",
                           ),
                           Node.Text(text = "text 3"),
+                          Node.TextButton(text = "Button"),
                           Node.Text(text = "text 4"),
                           Node.Row(
                               children =
@@ -109,9 +111,6 @@ class MainActivity : ComponentActivity() {
                 page = page,
                 updateNode = { newNode ->
                   page = page.copyWithNewNode(newNode)
-                  // TODO if there is any validation,
-                  //  then maybe copyWithNewNode should return
-                  //  the new new node as well
                   newNode
                 },
             )
@@ -124,15 +123,35 @@ class MainActivity : ComponentActivity() {
   private fun Page.copyWithNewNode(newNode: Node): Page =
       this.copy(node = this.node.copyWithNewNode(newNode))
 
-  /** TODO skip reset of the tree once a single replacement has been done */
   private fun Node.copyWithNewNode(newNode: Node): Node =
       when {
         this.id == newNode.id -> newNode
-        this is Node.Column ->
-            this.copy(children = this.children.map { it.copyWithNewNode(newNode) })
-        this is Node.Row -> this.copy(children = this.children.map { it.copyWithNewNode(newNode) })
+        this is Node.Column -> copy(children = children.map { it.copyWithNewNode(newNode) })
+        this is Node.Row -> copy(children = children.map { it.copyWithNewNode(newNode) })
         else -> this
       }
+
+  /**
+   * (Hopefully) Slightly more efficient way to recursively way to replace a single node, by
+   * skipping the rest once a single replacement has been done
+   *
+   * Commented out because it is often slower (benchmark via [measureTimedValue])
+   */
+  //  @OptIn(ExperimentalTime::class)
+  //  private fun recursivelyCopyWithNewNode(children: List<Node>, newNode: Node): List<Node> {
+  //    var currentIndex = 0
+  //    var replacementHasBeenDone = false
+  //    val newChildren = mutableListOf<Node>()
+  //    while (currentIndex < children.size && !replacementHasBeenDone) {
+  //      val currentNode = children[currentIndex]
+  //      val updatedNode = currentNode.copyWithNewNode(newNode)
+  //      if (currentNode == updatedNode) replacementHasBeenDone = true
+  //      newChildren.add(updatedNode)
+  //      currentIndex += 1
+  //    }
+  //    newChildren.addAll(children.takeLast(children.size - currentIndex))
+  //    return newChildren
+  //  }
 }
 
 @Composable

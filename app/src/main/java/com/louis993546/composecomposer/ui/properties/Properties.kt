@@ -65,6 +65,7 @@ fun ImageProperties(
     snapshotFlow { painter.loadState }.filter { it.isFinalState() }.collect { result: ImageLoadState
       ->
       if (result is ImageLoadState.Success) {
+        error = null
         onNodeModified(node.copy(url = newUrl))
       } else if (result is ImageLoadState.Error) {
         error = result.throwable?.stackTraceToString() ?: "Some error"
@@ -73,8 +74,20 @@ fun ImageProperties(
   }
 
   Column(modifier = modifier) {
-    TextField(value = newUrl, onValueChange = { newUrl = it })
-    // TODO TextField for ContentDescription
+    TextField(
+        label = { Text(text = "URL") },
+        value = newUrl,
+        singleLine = true,
+        onValueChange = { newUrl = it },
+        isError = error != null,
+    )
+    TextField(
+        label = { Text(text = "Alt (Optional)") },
+        value = node.contentDescription,
+        singleLine = true,
+        onValueChange = { onNodeModified(node.copy(contentDescription = it)) },
+    )
+
     Divider()
     Text(text = "Preview")
 
