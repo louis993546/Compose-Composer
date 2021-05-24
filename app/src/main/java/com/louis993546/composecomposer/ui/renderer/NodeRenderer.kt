@@ -1,3 +1,4 @@
+/* (C)2021 */
 package com.louis993546.composecomposer.ui.renderer
 
 import androidx.compose.foundation.Image
@@ -16,33 +17,33 @@ fun NodeRenderer(
     rowScope: RowScope? = null,
     columnScope: ColumnScope? = null,
 ) {
-    Box(modifier = modifier) {
-        when (node) {
-            is Node.Checkbox -> CheckboxNode(node = node)
-            is Node.Column -> ColumnNode(node = node)
-            is Node.Image -> ImageNode(node = node)
-            is Node.RadioGroup -> RadioGroupNode(node = node)
-            is Node.Row -> RowNode(node = node)
-            is Node.Text -> TextNode(node = node)
-        }.exhaustive
-    }
+  Box(modifier = modifier) {
+    when (node) {
+      is Node.Checkbox -> CheckboxNode(node = node)
+      is Node.Column -> ColumnNode(node = node)
+      is Node.Image -> ImageNode(node = node)
+      is Node.RadioGroup -> RadioGroupNode(node = node)
+      is Node.Row -> RowNode(node = node)
+      is Node.Text -> TextNode(node = node)
+    }.exhaustive
+  }
 }
 
 @Composable
 private fun ImageNode(
     node: Node.Image,
 ) {
-    Image(
-        painter = rememberGlidePainter(request = node.url),
-        contentDescription = "",
-    )
+  Image(
+      painter = rememberGlidePainter(request = node.url),
+      contentDescription = "",
+  )
 }
 
 @Composable
 private fun RadioGroupNode(
     node: Node.RadioGroup,
 ) {
-    Text(
-        text = "TODO radio group",
-    )
+  Text(
+      text = "TODO radio group",
+  )
 }

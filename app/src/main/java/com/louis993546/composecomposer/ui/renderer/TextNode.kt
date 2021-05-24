@@ -1,3 +1,4 @@
+/* (C)2021 */
 package com.louis993546.composecomposer.ui.renderer
 
 import androidx.compose.material.Text
@@ -10,15 +11,13 @@ import com.louis993546.composecomposer.util.PreviewTheme
 fun TextNode(
     node: Node.Text,
 ) {
-    Text(
-        text = node.text,
-    )
+  Text(
+      text = node.text,
+  )
 }
 
 @Preview
 @Composable
 fun Preview_TextNode() {
-    PreviewTheme {
-        TextNode(node = Node.Text(text = "text node"))
-    }
+  PreviewTheme { TextNode(node = Node.Text(text = "text node")) }
 }

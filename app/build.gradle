@@ -48,7 +48,8 @@ android {
 
 spotless {
     kotlin {
-        ktlint()
+        target '**/*.kt'
+        ktfmt()
         licenseHeader '/* (C)$YEAR */'
     }
 }

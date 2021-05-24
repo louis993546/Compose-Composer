@@ -1,3 +1,4 @@
+/* (C)2021 */
 package com.louis993546.composecomposer.ui.renderer
 
 import androidx.compose.foundation.background
@@ -17,19 +18,14 @@ fun PageRenderer(
     modifier: Modifier,
     page: Page,
 ) {
-    Box(
-        modifier = modifier
-            .widthIn(min = (page.width + 16.dp))
-            .fillMaxHeight()
-    ) {
-        NodeRenderer(
-            modifier = Modifier
-                .size(width = page.width, height = page.height)
+  Box(modifier = modifier.widthIn(min = (page.width + 16.dp)).fillMaxHeight()) {
+    NodeRenderer(
+        modifier =
+            Modifier.size(width = page.width, height = page.height)
                 .scale(1f) // TODO expose this
                 .background(color = page.backgroundColor)
-                .align(Alignment.Center)
-                ,
-            node = page.node,
-        )
-    }
+                .align(Alignment.Center),
+        node = page.node,
+    )
+  }
 }

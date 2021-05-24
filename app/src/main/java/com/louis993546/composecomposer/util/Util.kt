@@ -1,3 +1,4 @@
+/* (C)2021 */
 package com.louis993546.composecomposer.util
 
 import androidx.compose.runtime.Composable
@@ -9,12 +10,12 @@ import kotlin.random.Random
 fun randId(): Id = Id(Random.nextInt())
 
 val <T> T.exhaustive: T
-    get() = this
+  get() = this
 
-/**
- * TODO see what makes sense for a Preview Theme
- */
+/** TODO see what makes sense for a Preview Theme */
 @Composable
-fun PreviewTheme(content: @Composable () -> Unit,) {
-    ComposeComposerTheme(content = content)
+fun PreviewTheme(
+    content: @Composable () -> Unit,
+) {
+  ComposeComposerTheme(content = content)
 }
