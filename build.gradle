@@ -6,6 +6,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+         gradlePluginPortal()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:7.1.0-alpha01"
@@ -22,7 +23,14 @@ plugins {
 
 detekt {
     buildUponDefaultConfig = true
+    baseline = file("detekt-baseline.xml")
     allRules = false // skip unstable rules
+
+    input = files(
+            "app/src/main/java",
+            "app/src/test/java",
+            "app/src/androidTest/java",
+    )
 
     reports {
         html.enabled = true
