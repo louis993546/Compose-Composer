@@ -17,17 +17,20 @@ buildscript {
 }
 
 plugins {
-    id "com.diffplug.spotless" version "5.12.5"
+    id "io.gitlab.arturbosch.detekt" version "1.17.0"
 }
 
-spotless {
-    kotlin {
-        target '**/*.kt'
-        ktfmt()
-        licenseHeader '/* (C)$YEAR */'
+detekt {
+    buildUponDefaultConfig = true
+    allRules = false // skip unstable rules
+
+    reports {
+        html.enabled = true
+        xml.enabled = true
+        sarif.enabled = true
     }
 }
 
-task cleanBuildDir(type: Delete) {
+task clean(type: Delete) {
     delete rootProject.buildDir
 }

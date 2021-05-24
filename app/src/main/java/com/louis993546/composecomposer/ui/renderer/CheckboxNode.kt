@@ -11,21 +11,22 @@ import com.louis993546.composecomposer.util.PreviewTheme
 fun CheckboxNode(
     node: Node.Checkbox,
 ) {
-  Checkbox(
-      checked = node.checked,
-      onCheckedChange = {},
-  )
+    Checkbox(
+        checked = node.checked,
+        onCheckedChange = {},
+    )
 }
 
 @Preview
 @Composable
 fun Preview_CheckboxNode() {
-  PreviewTheme {
-    CheckboxNode(
-        node =
+    PreviewTheme {
+        CheckboxNode(
+            node =
             Node.Checkbox(
                 text = "checkbox",
                 checked = true,
-            ))
-  }
+            ),
+        )
+    }
 }
