@@ -8,13 +8,15 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Setup Java 11
+        uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: 11
       - name: Generate Release AAB
-        run: ./gradlew bundleRelease
+        run: ./gradlew bundleRelease -PrunBuildScan=true
       - name: Sign Android release
         uses: r0adkll/sign-android-release@v1
         with:
