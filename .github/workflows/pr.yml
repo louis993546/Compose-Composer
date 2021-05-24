@@ -36,11 +36,11 @@ jobs:
           java-version: 11
       - name: Lint
         run: ./gradlew :app:lint
-      - name: Archive lint results
-        uses: actions/upload-artifact@v2
+      - name: Upload SARIF to Github
+        uses: github/codeql-action/upload-sarif@v1
+        if: ${{ always() }}
         with:
-          name: lint-result
-          path: app/build/reports/lint-results-debug.html
+          sarif_file: app/build/reports/lint-results-debug.sarif
   detekt:
     runs-on: ubuntu-latest
     steps:
@@ -55,7 +55,7 @@ jobs:
         run: ./gradlew detekt
       # Make sure we always run this upload task, because the previous step fails if there are
       # findings.
-      - name: Upload SARIF to Github using the upload-sarif action
+      - name: Upload SARIF to Github
         uses: github/codeql-action/upload-sarif@v1
         if: ${{ always() }}
         with:
