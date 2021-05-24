@@ -57,7 +57,7 @@ jobs:
       # findings.
       - name: Upload SARIF to Github using the upload-sarif action
         uses: github/codeql-action/upload-sarif@v1
-        if: $
+        if: ${{ always() }}
         with:
           sarif_file: build/detekt.sarif
   unit-tests:
