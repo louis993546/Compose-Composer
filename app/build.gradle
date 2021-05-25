@@ -43,6 +43,10 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
     }
+    lintOptions {
+        htmlReport true
+        sarifReport true
+    }
 }
 
 dependencies {
