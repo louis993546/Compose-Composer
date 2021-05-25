@@ -1,4 +1,3 @@
-/* (C)2021 */
 package com.louis993546.composecomposer
 
 import android.content.res.Configuration
@@ -6,28 +5,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.louis993546.composecomposer.data.adapter.ColorMoshiAdapter
-import com.louis993546.composecomposer.data.adapter.DpMoshiAdapter
+import com.louis993546.composecomposer.data.PageRepository
+import com.louis993546.composecomposer.data.defaultPage
 import com.louis993546.composecomposer.data.model.Node
 import com.louis993546.composecomposer.data.model.Page
 import com.louis993546.composecomposer.ui.properties.Properties
@@ -35,9 +20,7 @@ import com.louis993546.composecomposer.ui.renderer.PageRenderer
 import com.louis993546.composecomposer.ui.theme.ComposeComposerTheme
 import com.louis993546.composecomposer.ui.tree.Tree
 import com.louis993546.composecomposer.util.exhaustive
-import com.louis993546.composecomposer.util.randId
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.addAdapter
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.time.measureTimedValue
 
@@ -47,87 +30,46 @@ class MainActivity : ComponentActivity() {
         private val panelOrders = listOf(Panel.Tree, Panel.Renderer, Panel.Properties)
     }
 
-    @ExperimentalStdlibApi
-    private val moshi =
-        Moshi.Builder().addAdapter(DpMoshiAdapter()).addAdapter(ColorMoshiAdapter()).build()
-
-    private val defaultPage =
-        Page(
-            id = randId(),
-            name = "",
-            width = 360.dp,
-            height = 640.dp,
-            backgroundColor = Color.Gray,
-            node =
-            Node.Column(
-                children =
-                listOf(
-                    Node.Text(text = "text 1"),
-                    Node.Text(text = "text 2"),
-                    Node.Image(
-                        url =
-                        "https://pbs.twimg.com/profile_images/1377946002473254912/h3q66L7m_400x400.png",
-                        contentDescription = "Avatar of @louis993546 on Twitter",
-                    ),
-                    Node.Text(text = "text 3"),
-                    Node.TextButton(text = "Button"),
-                    Node.Text(text = "text 4"),
-                    Node.Row(
-                        children =
-                        listOf(
-                            Node.Text(text = "text 1"),
-                            Node.Column(
-                                children =
-                                listOf(
-                                    Node.Text(text = "text 1"),
-                                    Node.Row(
-                                        children =
-                                        listOf(
-                                            Node.Text(text = "text 1"),
-                                            Node.Column(
-                                                children =
-                                                listOf(
-                                                    Node.Text(
-                                                        text = "text 1",
-                                                    ),
-                                                    Node.Row(
-                                                        children =
-                                                        listOf(
-                                                            Node.Text(
-                                                                text =
-                                                                "text 1",
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                            ),
-                            Node.Text(text = "text 2"),
-                            Node.Text(text = "text 3"),
-                        ),
-                    ),
-                    Node.Checkbox(text = "Checkbox", checked = false),
-                ),
-            ),
-        )
+    lateinit var pageRepository: PageRepository
 
     @ExperimentalStdlibApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        injector.inject(this)
+
         setContent {
-            var page by remember { mutableStateOf(defaultPage) }
+            var page by remember { mutableStateOf(defaultPage) } // TODO swap out defaultPage
+
+            val coroutineScope = rememberCoroutineScope()
+            val onSaveClick: () -> Unit = {
+                coroutineScope.launch {
+                    pageRepository.savePage(page)
+                }
+            }
+            val onReadListClick: () -> Unit = {
+                coroutineScope.launch {
+                    pageRepository.getPageInfoList().forEach {
+                        Timber.d(it.toString())
+                    }
+                }
+            }
+            val onReadPageClick: () -> Unit = {
+                coroutineScope.launch {
+                    pageRepository.getPageInfoList().firstOrNull()?.run {
+                        Timber.d(pageRepository.getPage(this)?.toString() ?: "empty")
+                    }
+                }
+            }
+
 
             ComposeComposerTheme {
                 Scaffold(
                     topBar = {
-                        TopBar(testOnClick = {
-                            Timber.d(
-                                moshi.adapter(Page::class.java).toJson(page)
-                            )
-                        })
+                        TopBar(
+                            onSaveClicked = onSaveClick,
+                            onReadListClicked = onReadListClick,
+                            onReadPageClicked = onReadPageClick,
+                        )
                     },
                 ) { innerPadding ->
                     Surface(
@@ -278,11 +220,15 @@ fun PanelDivider(
 @Composable
 fun TopBar(
     modifier: Modifier = Modifier,
-    testOnClick: () -> Unit,
+    onSaveClicked: () -> Unit,
+    onReadListClicked: () -> Unit,
+    onReadPageClicked: () -> Unit,
 ) {
     TopAppBar(modifier = modifier) {
         Text("Composer")
-        Button(onClick = testOnClick) { Text("Serialize to logcat") }
+        Button(onClick = onSaveClicked) { Text("Serialize to logcat") }
+        Button(onClick = onReadListClicked) { Text("Read list of files") }
+        Button(onClick = onReadPageClicked) { Text("Read the first page") }
     }
 }
 

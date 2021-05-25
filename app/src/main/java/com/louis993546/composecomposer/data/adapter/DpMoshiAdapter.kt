@@ -1,4 +1,3 @@
-/* (C)2021 */
 package com.louis993546.composecomposer.data.adapter
 
 import androidx.compose.ui.unit.Dp

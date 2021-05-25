@@ -1,4 +1,3 @@
-/* (C)2021 */
 package com.louis993546.composecomposer.ui.renderer
 
 import androidx.compose.foundation.layout.Row

@@ -1,4 +1,3 @@
-/* (C)2021 */
 package com.louis993546.composecomposer.data.model
 
 import androidx.compose.ui.graphics.Color
@@ -11,7 +10,7 @@ import com.squareup.moshi.JsonClass
  */
 @JsonClass(generateAdapter = true)
 data class Page(
-    val id: Id,
+    val id: Int,
     val name: String,
     val width: Dp,
     val height: Dp,

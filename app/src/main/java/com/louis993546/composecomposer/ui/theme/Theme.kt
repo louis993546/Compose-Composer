@@ -1,4 +1,3 @@
-/* (C)2021 */
 package com.louis993546.composecomposer.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
