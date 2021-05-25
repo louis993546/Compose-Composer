@@ -7,6 +7,7 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    environment: open-testing
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
