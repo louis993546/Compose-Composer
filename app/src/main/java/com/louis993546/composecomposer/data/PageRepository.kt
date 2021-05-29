@@ -15,7 +15,7 @@ import java.io.IOException
 
 /**
  * TODO maybe it would be better to return some Result type instead of "null when failed"
- *   https://github.com/Kotlin/KEEP/pull/244
+ *   https://github.com/Kotlin/KEEP/pull/244 (kotlin 1.5)
  */
 interface PageRepository {
     suspend fun getPageInfoList(): List<PageInfo>

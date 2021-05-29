@@ -7,6 +7,9 @@ import com.louis993546.composecomposer.MainActivity
 import com.louis993546.composecomposer.data.FilePageRepository
 import com.louis993546.composecomposer.data.adapter.ColorMoshiAdapter
 import com.louis993546.composecomposer.data.adapter.DpMoshiAdapter
+import com.louis993546.composecomposer.data.settings.DataStoreSettingsRepository
+import com.louis993546.composecomposer.data.settings.SettingsRepository
+import com.louis993546.composecomposer.data.settings.settingsStore
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.addAdapter
 import com.squareup.sqldelight.android.AndroidSqliteDriver
@@ -33,11 +36,17 @@ object ManualInjector : Injector {
     }
 
     override fun inject(mainActivity: MainActivity) {
-        mainActivity.pageRepository = FilePageRepository(
-            moshi = moshi,
-            database = database,
-            context = mainActivity,
-            dispatcher = Dispatchers.IO
-        )
+        with(mainActivity) {
+            pageRepository = FilePageRepository(
+                moshi = moshi,
+                database = database,
+                context = mainActivity,
+                dispatcher = Dispatchers.IO
+            )
+
+            settingsRepository = DataStoreSettingsRepository(
+                settingsStore = settingsStore
+            )
+        }
     }
 }
