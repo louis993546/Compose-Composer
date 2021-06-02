@@ -8,16 +8,16 @@ import timber.log.Timber
 
 class ColorMoshiAdapter : JsonAdapter<Color?>() {
     override fun fromJson(reader: JsonReader): Color? {
-        val colorLong = reader.nextLong()
-        Timber.tag("qqq").d(colorLong.toString())
-//        val x: ULong = colorLong.toULong() // TODO this needs kotlin 1.5
-        return Color(colorLong)
+        val long = reader.nextLong().toULong()
+        val color = Color(long)
+        Timber.tag("color").d(color.toString())
+        return color
     }
 
     @ExperimentalUnsignedTypes
     override fun toJson(writer: JsonWriter, value: Color?) {
+        Timber.tag("color").d(value?.toString())
         value?.value?.toLong()?.let {
-            Timber.tag("qqq").d(it.toString())
             writer.value(it)
         }
     }
