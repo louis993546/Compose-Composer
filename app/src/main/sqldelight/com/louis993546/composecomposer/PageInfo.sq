@@ -1,0 +1,17 @@
+-- TODO created at & last update at
+CREATE TABLE pageInfo(
+    id      INTEGER     NOT NULL    UNIQUE,
+    name    TEXT        NOT NULL
+);
+
+selectAll:
+SELECT *
+FROM pageInfo;
+
+savePage:
+REPLACE INTO pageInfo (id, name)
+VALUES(?, ?);
+
+deletePage:
+DELETE FROM pageInfo
+WHERE id = ?;

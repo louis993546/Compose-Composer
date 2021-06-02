@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_package = "com.louis993546.composecomposer";
+option java_multiple_files = true;
+
+message Settings {
+  PanelOrder panel_order = 1;
+}
+
+message PanelOrder {
+  int32 tree = 1;
+  int32 renderer = 2;
+  int32 properties = 3;
+}

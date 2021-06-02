@@ -1,4 +1,3 @@
-/* (C)2021 */
 package com.louis993546.composecomposer
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
