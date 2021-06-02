@@ -17,11 +17,11 @@ fun RowProperties(
     onNodeModified: (Node) -> Unit,
 ) {
     Column(modifier = modifier) {
-        AddItemButton()
+        AddItemButton(node, onNodeModified)
         node.children.forEach { child ->
             // TODO should I just reuse NodeDescription here?
             Text(text = child.toString())
-            AddItemButton(onNodeModified = onNodeModified)
+            AddItemButton(node, onNodeModified)
         }
     }
 }
