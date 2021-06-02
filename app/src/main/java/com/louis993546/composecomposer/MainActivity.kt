@@ -14,6 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.louis993546.composecomposer.data.PageRepository
 import com.louis993546.composecomposer.data.defaultPage
 import com.louis993546.composecomposer.data.model.Node
@@ -24,6 +28,9 @@ import com.louis993546.composecomposer.ui.renderer.PageRenderer
 import com.louis993546.composecomposer.ui.theme.ComposeComposerTheme
 import com.louis993546.composecomposer.ui.tree.Tree
 import com.louis993546.composecomposer.util.exhaustive
+import com.louis993546.composecomposer.util.isPhabletSize
+import com.louis993546.composecomposer.util.isPhoneSize
+import com.louis993546.composecomposer.util.isTabletSize
 import kotlinx.coroutines.launch
 import kotlin.time.measureTimedValue
 
@@ -37,13 +44,7 @@ class MainActivity : ComponentActivity() {
         injector.inject(this)
 
         setContent {
-            val panelOrders =
-                settingsRepository.getPanelOrderFlow().collectAsState(initial = emptyList())
-            var page by remember { mutableStateOf(defaultPage) } // TODO swap out defaultPage
-
-            val coroutineScope = rememberCoroutineScope()
-            val onSaveClick: () -> Unit =
-                { coroutineScope.launch { pageRepository.savePage(page) } }
+            val navController = rememberNavController()
 //            val onReadListClick: () -> Unit = {
 //                coroutineScope.launch {
 //                    pageRepository.getPageInfoList().forEach { Timber.d(it.toString()) }
@@ -62,64 +63,98 @@ class MainActivity : ComponentActivity() {
 //            }
 
             ComposeComposerTheme {
-                Scaffold(
-                    topBar = {
-                        TopBar(
-                            onSaveClicked = onSaveClick,
-                        )
-                    },
-                ) { innerPadding ->
-                    Surface(
-                        modifier = Modifier.padding(innerPadding),
-                        color = MaterialTheme.colors.background,
-                    ) {
-                        Body(
-                            panels = panelOrders.value,
-                            page = page,
-                            updateNode = { newNode ->
-                                page = page.copyWithNewNode(newNode)
-                                newNode
-                            },
+                NavHost(navController = navController, startDestination = "edit") {
+                    composable("edit") {
+                        EditScreen(
+                            navController = navController,
+                            settingsRepository = settingsRepository,
+                            pageRepository = pageRepository,
                         )
                     }
+                    composable("test") { Text(text = "Test") }
                 }
             }
         }
     }
-
-    private fun Page.copyWithNewNode(newNode: Node): Page =
-        this.copy(node = this.node.copyWithNewNode(newNode))
-
-    private fun Node.copyWithNewNode(newNode: Node): Node =
-        when {
-            this.id == newNode.id -> newNode
-            this is Node.Column -> copy(children = children.map { it.copyWithNewNode(newNode) })
-            this is Node.Row -> copy(children = children.map { it.copyWithNewNode(newNode) })
-            else -> this
-        }
-
-    /**
-     * (Hopefully) Slightly more efficient way to recursively way to replace a single node, by
-     * skipping the rest once a single replacement has been done
-     *
-     * Commented out because it is often slower (benchmark via [measureTimedValue])
-     */
-    //  @OptIn(ExperimentalTime::class)
-    //  private fun recursivelyCopyWithNewNode(children: List<Node>, newNode: Node): List<Node> {
-    //    var currentIndex = 0
-    //    var replacementHasBeenDone = false
-    //    val newChildren = mutableListOf<Node>()
-    //    while (currentIndex < children.size && !replacementHasBeenDone) {
-    //      val currentNode = children[currentIndex]
-    //      val updatedNode = currentNode.copyWithNewNode(newNode)
-    //      if (currentNode == updatedNode) replacementHasBeenDone = true
-    //      newChildren.add(updatedNode)
-    //      currentIndex += 1
-    //    }
-    //    newChildren.addAll(children.takeLast(children.size - currentIndex))
-    //    return newChildren
-    //  }
 }
+
+@Composable
+fun EditScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    settingsRepository: SettingsRepository,
+    pageRepository: PageRepository,
+) {
+    val panelOrders =
+        settingsRepository.getPanelOrderFlow().collectAsState(initial = emptyList())
+    var page by remember { mutableStateOf(defaultPage) } // TODO swap out defaultPage
+
+    val coroutineScope = rememberCoroutineScope()
+    val onSaveClick: () -> Unit =
+        { coroutineScope.launch { pageRepository.savePage(page) } }
+
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopBar(
+                onSaveClicked = onSaveClick,
+                onCloseClicked = {
+                    // TODO need to show warning dialog first
+                    // navController.popBackStack()
+
+                    navController.navigate("test")
+                }
+            )
+        }
+    ) { innerPadding ->
+        Surface(
+            modifier = Modifier.padding(innerPadding),
+            color = MaterialTheme.colors.background,
+        ) {
+            Body(
+                panels = panelOrders.value,
+                page = page,
+                updateNode = { newNode ->
+                    page = page.copyWithNewNode(newNode)
+                    newNode
+                },
+            )
+        }
+    }
+}
+
+private fun Page.copyWithNewNode(newNode: Node): Page =
+    this.copy(node = this.node.copyWithNewNode(newNode))
+
+private fun Node.copyWithNewNode(newNode: Node): Node =
+    when {
+        this.id == newNode.id -> newNode
+        this is Node.Column -> copy(children = children.map { it.copyWithNewNode(newNode) })
+        this is Node.Row -> copy(children = children.map { it.copyWithNewNode(newNode) })
+        else -> this
+    }
+
+/**
+ * (Hopefully) Slightly more efficient way to recursively way to replace a single node, by
+ * skipping the rest once a single replacement has been done
+ *
+ * Commented out because it is often slower (benchmark via [measureTimedValue])
+ */
+//  @OptIn(ExperimentalTime::class)
+//  private fun recursivelyCopyWithNewNode(children: List<Node>, newNode: Node): List<Node> {
+//    var currentIndex = 0
+//    var replacementHasBeenDone = false
+//    val newChildren = mutableListOf<Node>()
+//    while (currentIndex < children.size && !replacementHasBeenDone) {
+//      val currentNode = children[currentIndex]
+//      val updatedNode = currentNode.copyWithNewNode(newNode)
+//      if (currentNode == updatedNode) replacementHasBeenDone = true
+//      newChildren.add(updatedNode)
+//      currentIndex += 1
+//    }
+//    newChildren.addAll(children.takeLast(children.size - currentIndex))
+//    return newChildren
+//  }
 
 @Composable
 fun Body(
@@ -181,11 +216,6 @@ fun TabletBody(
     }
 }
 
-private fun Configuration.isPhoneSize(): Boolean = screenWidthDp <= 411
-
-private fun Configuration.isPhabletSize(): Boolean = screenWidthDp <= 800
-
-private fun Configuration.isTabletSize(): Boolean = screenWidthDp > 800
 
 @Composable
 fun Page(
@@ -217,13 +247,14 @@ fun PanelDivider(
 @Composable
 fun TopBar(
     modifier: Modifier = Modifier,
+    onCloseClicked: () -> Unit,
     onSaveClicked: () -> Unit,
 ) {
     TopAppBar(
         title = { Text("Compose") },
         modifier = modifier,
         navigationIcon = {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = onCloseClicked) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_clear_24),
                     contentDescription = "Close"

@@ -1,5 +1,6 @@
 package com.louis993546.composecomposer.util
 
+import android.content.res.Configuration
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -19,6 +20,13 @@ fun randId(): Int = Random.nextInt()
 
 val <T> T.exhaustive: T
     get() = this
+
+fun Configuration.isPhoneSize(): Boolean = screenWidthDp <= 411
+
+fun Configuration.isPhabletSize(): Boolean = screenWidthDp <= 800
+
+fun Configuration.isTabletSize(): Boolean = screenWidthDp > 800
+
 
 /** It's just the normal theme ([ComposeComposerTheme]) with a border around it */
 @Composable
