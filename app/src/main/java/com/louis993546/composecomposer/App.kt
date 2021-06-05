@@ -6,7 +6,6 @@ import com.louis993546.composecomposer.di.Injector
 import com.louis993546.composecomposer.di.ManualInjector
 import timber.log.Timber
 
-@ExperimentalStdlibApi
 @Suppress("unused")
 class App : Application() {
     val injector: Injector = ManualInjector
@@ -21,6 +20,5 @@ class App : Application() {
     }
 }
 
-@ExperimentalStdlibApi
 val ComponentActivity.injector: Injector
     get() = (applicationContext as App).injector

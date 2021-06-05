@@ -1,6 +1,5 @@
 package com.louis993546.composecomposer
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,13 +10,18 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.insets.systemBarsPadding
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.louis993546.composecomposer.data.PageRepository
 import com.louis993546.composecomposer.data.defaultPage
 import com.louis993546.composecomposer.data.model.Node
@@ -32,47 +36,48 @@ import com.louis993546.composecomposer.util.isPhabletSize
 import com.louis993546.composecomposer.util.isPhoneSize
 import com.louis993546.composecomposer.util.isTabletSize
 import kotlinx.coroutines.launch
-import kotlin.time.measureTimedValue
 
 class MainActivity : ComponentActivity() {
     lateinit var pageRepository: PageRepository
     lateinit var settingsRepository: SettingsRepository
 
-    @ExperimentalStdlibApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         injector.inject(this)
 
         setContent {
-            val navController = rememberNavController()
-//            val onReadListClick: () -> Unit = {
-//                coroutineScope.launch {
-//                    pageRepository.getPageInfoList().forEach { Timber.d(it.toString()) }
-//                }
-//            }
-//            val onReadPageClick: () -> Unit = {
-//                coroutineScope.launch {
-//                    pageRepository.getPageInfoList().firstOrNull()?.run {
-//                        Timber.d(pageRepository.getPage(this)?.toString() ?: "empty")
-//                    }
-//                }
-//            }
-//
-//            val onShufflePanelOrderClicked: () -> Unit = {
-//                coroutineScope.launch { settingsRepository.savePanelOrder(panelOrders.value.shuffled()) }
-//            }
+            val systemUiController = rememberSystemUiController()
+            val useDarkIcons = !MaterialTheme.colors.isLight // don't know why it's flipped ¯\_(ツ)_/¯
 
+            SideEffect {
+                systemUiController.setSystemBarsColor(
+                    color = Color.Transparent,
+                    darkIcons = useDarkIcons
+                )
+            }
+
+
+            val navController = rememberNavController()
             ComposeComposerTheme {
-                NavHost(navController = navController, startDestination = "edit") {
-                    composable("edit") {
-                        EditScreen(
-                            navController = navController,
-                            settingsRepository = settingsRepository,
-                            pageRepository = pageRepository,
-                        )
+                ProvideWindowInsets {
+                    NavHost(
+                        modifier = Modifier.systemBarsPadding(),
+                        navController = navController,
+                        startDestination = "edit"
+                    ) {
+                        composable("edit") {
+                            EditScreen(
+                                navController = navController,
+                                settingsRepository = settingsRepository,
+                                pageRepository = pageRepository,
+                            )
+                        }
+                        composable("test") { Text(text = "Test") }
                     }
-                    composable("test") { Text(text = "Test") }
                 }
+
             }
         }
     }
@@ -133,28 +138,6 @@ private fun Node.copyWithNewNode(newNode: Node): Node =
         this is Node.Row -> copy(children = children.map { it.copyWithNewNode(newNode) })
         else -> this
     }
-
-/**
- * (Hopefully) Slightly more efficient way to recursively way to replace a single node, by
- * skipping the rest once a single replacement has been done
- *
- * Commented out because it is often slower (benchmark via [measureTimedValue])
- */
-//  @OptIn(ExperimentalTime::class)
-//  private fun recursivelyCopyWithNewNode(children: List<Node>, newNode: Node): List<Node> {
-//    var currentIndex = 0
-//    var replacementHasBeenDone = false
-//    val newChildren = mutableListOf<Node>()
-//    while (currentIndex < children.size && !replacementHasBeenDone) {
-//      val currentNode = children[currentIndex]
-//      val updatedNode = currentNode.copyWithNewNode(newNode)
-//      if (currentNode == updatedNode) replacementHasBeenDone = true
-//      newChildren.add(updatedNode)
-//      currentIndex += 1
-//    }
-//    newChildren.addAll(children.takeLast(children.size - currentIndex))
-//    return newChildren
-//  }
 
 @Composable
 fun Body(
