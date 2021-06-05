@@ -52,9 +52,6 @@ android {
     signingConfigs {
         debug {
             storeFile rootProject.file('debug.keystore')
-//            storePassword('debug')
-//            keyAlias 'debug'
-//            keyPassword('debug')
         }
     }
 }
