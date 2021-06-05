@@ -3,7 +3,7 @@ plugins {
     id "kotlin-android"
     id "org.jetbrains.kotlin.kapt"
     id "com.squareup.sqldelight"
-    id "com.google.protobuf" version "0.8.12"
+    id "com.google.protobuf" version "0.8.16"
 }
 
 android {
@@ -47,7 +47,7 @@ android {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.10.0"
+        artifact = "com.google.protobuf:protoc:$protobuf_version"
     }
 
     // Generates the java Protobuf-lite code for the Protobufs in this project. See
@@ -77,12 +77,12 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:2.4.0-alpha02"
 
     //region data store
-    implementation "com.google.protobuf:protobuf-javalite:3.10.0"
+    implementation "com.google.protobuf:protobuf-javalite:$protobuf_version"
     implementation "androidx.datastore:datastore:1.0.0-beta01"
     //endregion
 
     implementation "com.jakewharton.timber:timber:4.7.1"
-    implementation "com.google.accompanist:accompanist-glide:0.10.0"
+    implementation "com.google.accompanist:accompanist-glide:0.11.1"
 
     //region moshi
     implementation "com.squareup.moshi:moshi:1.12.0"
