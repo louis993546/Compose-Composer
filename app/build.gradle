@@ -28,20 +28,31 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
         useIR = true
         freeCompilerArgs = ["-Xinline-classes"]
     }
+
     buildFeatures.compose = true
+
     composeOptions.kotlinCompilerExtensionVersion compose_version
+
     lintOptions {
         htmlReport true
         sarifReport true
+    }
+
+    signingConfigs {
+        debug {
+            storeFile rootProject.file('debug.keystore')
+        }
     }
 }
 
