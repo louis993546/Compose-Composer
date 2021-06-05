@@ -8,7 +8,6 @@ import com.louis993546.composecomposer.data.FilePageRepository
 import com.louis993546.composecomposer.data.adapter.ColorMoshiAdapter
 import com.louis993546.composecomposer.data.adapter.DpMoshiAdapter
 import com.louis993546.composecomposer.data.settings.DataStoreSettingsRepository
-import com.louis993546.composecomposer.data.settings.SettingsRepository
 import com.louis993546.composecomposer.data.settings.settingsStore
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.addAdapter
@@ -17,8 +16,8 @@ import com.squareup.sqldelight.db.SqlDriver
 import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
 
-@ExperimentalStdlibApi
 object ManualInjector : Injector {
+    @OptIn(ExperimentalStdlibApi::class)
     private val moshi by lazy {
         Moshi.Builder()
             .addAdapter(DpMoshiAdapter())
