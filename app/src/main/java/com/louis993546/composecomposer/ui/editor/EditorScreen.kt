@@ -1,6 +1,5 @@
 package com.louis993546.composecomposer.ui.editor
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -10,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.louis993546.composecomposer.R
 import com.louis993546.composecomposer.data.PageRepository
@@ -19,7 +17,7 @@ import com.louis993546.composecomposer.data.model.Node
 import com.louis993546.composecomposer.data.model.Page
 import com.louis993546.composecomposer.data.settings.SettingsRepository
 import com.louis993546.composecomposer.di.Injector
-import com.louis993546.composecomposer.di.ManualInjector.inject
+import com.louis993546.composecomposer.ui.components.VerticalDivider
 import com.louis993546.composecomposer.ui.editor.properties.Properties
 import com.louis993546.composecomposer.ui.editor.renderer.PageRenderer
 import com.louis993546.composecomposer.ui.editor.tree.Tree
@@ -41,7 +39,7 @@ fun EditorScreen(
     val settingsRepository = dependencies.settingsRepository
     val pageRepository = dependencies.pageRepository
 
-    val panelOrders =
+    val panelOrders by
         settingsRepository.getPanelOrderFlow().collectAsState(initial = emptyList())
     var page by remember { mutableStateOf(defaultPage) } // TODO swap out defaultPage
 
@@ -68,7 +66,7 @@ fun EditorScreen(
             color = MaterialTheme.colors.background,
         ) {
             Body(
-                panels = panelOrders.value,
+                panels = panelOrders,
                 page = page,
                 updateNode = { newNode ->
                     page = page.copyWithNewNode(newNode)
@@ -152,7 +150,7 @@ fun TabletBody(
                         onNodeModified = onNodeModified,
                     )
             }.exhaustive
-            if (index < panels.size) PanelDivider()
+            if (index < panels.size) VerticalDivider()
         }
     }
 }
@@ -170,22 +168,6 @@ fun Page(
         onNodeSelected = onNodeSelected,
     )
 }
-
-/** Copy of [androidx.compose.material.Divider] but vertical */
-@Composable
-fun PanelDivider(
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier =
-        modifier
-            .width(1.dp)
-            .fillMaxHeight()
-            .background(color = MaterialTheme.colors.onSurface.copy(alpha = 0.12f)),
-    )
-}
-
-
 
 @Composable
 fun TopBar(

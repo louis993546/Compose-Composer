@@ -11,6 +11,7 @@ import com.louis993546.composecomposer.data.adapter.DpMoshiAdapter
 import com.louis993546.composecomposer.data.settings.DataStoreSettingsRepository
 import com.louis993546.composecomposer.data.settings.settingsStore
 import com.louis993546.composecomposer.ui.editor.EditorScreenDependencies
+import com.louis993546.composecomposer.ui.finder.FinderScreenDependencies
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.addAdapter
 import com.squareup.sqldelight.android.AndroidSqliteDriver
@@ -37,17 +38,24 @@ object ManualInjector : Injector {
     }
 
     override fun inject(into: EditorScreenDependencies, context: Context) {
-        with(context) {
-            into.pageRepository = FilePageRepository(
-                moshi = moshi,
-                database = database,
-                context = this,
-                dispatcher = Dispatchers.IO
-            )
+        into.pageRepository = FilePageRepository(
+            moshi = moshi,
+            database = database,
+            context = context,
+            dispatcher = Dispatchers.IO
+        )
 
-            into.settingsRepository = DataStoreSettingsRepository(
-                settingsStore = settingsStore
-            )
-        }
+        into.settingsRepository = DataStoreSettingsRepository(
+            settingsStore = context.settingsStore
+        )
+    }
+
+    override fun inject(into: FinderScreenDependencies, context: Context) {
+        into.pageRepository = FilePageRepository(
+            moshi = moshi,
+            database = database,
+            context = context,
+            dispatcher = Dispatchers.IO
+        )
     }
 }

@@ -17,9 +17,9 @@ import com.google.accompanist.insets.systemBarsPadding
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.louis993546.composecomposer.ui.editor.EditorScreen
 import com.louis993546.composecomposer.ui.editor.theme.ComposeComposerTheme
+import com.louis993546.composecomposer.ui.finder.FinderScreen
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
                     NavHost(
                         modifier = Modifier.systemBarsPadding(),
                         navController = navController,
-                        startDestination = Screen.Editor.name
+                        startDestination = Screen.Finder.name
                     ) {
                         composable(Screen.Editor.name) {
                             EditorScreen(
@@ -49,7 +49,12 @@ class MainActivity : ComponentActivity() {
                                 injector = injector,
                             )
                         }
-                        composable(Screen.Finder.name) { Text(text = "Test") }
+                        composable(Screen.Finder.name) {
+                            FinderScreen(
+                                navController = navController,
+                                injector =  injector,
+                            )
+                        }
                     }
                 }
 

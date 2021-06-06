@@ -6,8 +6,11 @@ import com.louis993546.composecomposer.PageInfo
 import com.louis993546.composecomposer.data.model.Page
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import com.squareup.sqldelight.runtime.coroutines.asFlow
+import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
@@ -19,6 +22,8 @@ import java.io.IOException
  */
 interface PageRepository {
     suspend fun getPageInfoList(): List<PageInfo>
+
+    fun getPageInfoListFLow(): Flow<List<PageInfo>>
 
     suspend fun getPage(pageInfo: PageInfo): Page?
 
@@ -40,6 +45,12 @@ class FilePageRepository(
             .selectAll()
             .executeAsList()
     }
+
+    override fun getPageInfoListFLow(): Flow<List<PageInfo>> = database
+        .pageInfoQueries
+        .selectAll()
+        .asFlow()
+        .mapToList()
 
     override suspend fun getPage(pageInfo: PageInfo) = withContext(dispatcher) {
         try {
