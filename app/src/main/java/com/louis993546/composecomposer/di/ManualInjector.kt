@@ -1,5 +1,6 @@
 package com.louis993546.composecomposer.di
 
+import android.content.Context
 import com.louis993546.composecomposer.App
 import com.louis993546.composecomposer.BuildConfig
 import com.louis993546.composecomposer.Database
@@ -9,6 +10,7 @@ import com.louis993546.composecomposer.data.adapter.ColorMoshiAdapter
 import com.louis993546.composecomposer.data.adapter.DpMoshiAdapter
 import com.louis993546.composecomposer.data.settings.DataStoreSettingsRepository
 import com.louis993546.composecomposer.data.settings.settingsStore
+import com.louis993546.composecomposer.ui.editor.EditorScreenDependencies
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.addAdapter
 import com.squareup.sqldelight.android.AndroidSqliteDriver
@@ -34,16 +36,16 @@ object ManualInjector : Injector {
         app.timberTree = if (BuildConfig.DEBUG) Timber.DebugTree() else null
     }
 
-    override fun inject(mainActivity: MainActivity) {
-        with(mainActivity) {
-            pageRepository = FilePageRepository(
+    override fun inject(into: EditorScreenDependencies, context: Context) {
+        with(context) {
+            into.pageRepository = FilePageRepository(
                 moshi = moshi,
                 database = database,
-                context = mainActivity,
+                context = this,
                 dispatcher = Dispatchers.IO
             )
 
-            settingsRepository = DataStoreSettingsRepository(
+            into.settingsRepository = DataStoreSettingsRepository(
                 settingsStore = settingsStore
             )
         }

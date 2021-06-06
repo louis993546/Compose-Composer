@@ -1,4 +1,4 @@
-package com.louis993546.composecomposer.ui.renderer
+package com.louis993546.composecomposer.ui.editor.renderer
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable

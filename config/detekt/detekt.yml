@@ -101,7 +101,7 @@ complexity:
     threshold: 60
   LongParameterList:
     active: true
-    functionThreshold: 6
+    functionThreshold: 12 # This is often huge in the world of Compose ¯\_(ツ)_/¯
     constructorThreshold: 7
     ignoreDefaultParameters: false
     ignoreDataClasses: true

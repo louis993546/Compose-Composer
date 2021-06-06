@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.louis993546.composecomposer.ui.theme.ComposeComposerTheme
+import com.louis993546.composecomposer.ui.editor.theme.ComposeComposerTheme
 import kotlin.random.Random
 
 @Suppress("DeprecatedCallableAddReplaceWith")

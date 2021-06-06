@@ -1,25 +1,25 @@
-package com.louis993546.composecomposer.ui.renderer
+package com.louis993546.composecomposer.ui.editor.renderer
 
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.louis993546.composecomposer.data.model.Node
 import com.louis993546.composecomposer.util.PreviewTheme
 
 @Composable
-fun RowNode(
-    node: Node.Row,
+fun ColumnNode(
+    node: Node.Column,
 ) {
-    Row { node.children.forEach { child -> NodeRenderer(node = child, rowScope = this) } }
+    Column { node.children.forEach { child -> NodeRenderer(node = child, columnScope = this) } }
 }
 
 @Preview
 @Composable
-fun Preview_RowNode() {
+fun Preview_ColumnNode() {
     PreviewTheme {
-        RowNode(
+        ColumnNode(
             node =
-            Node.Row(
+            Node.Column(
                 children =
                 listOf(
                     Node.Text(text = "text 1"),
