@@ -2,8 +2,8 @@ package com.louis993546.composecomposer.data
 
 import android.content.Context
 import com.louis993546.composecomposer.Database
-import com.louis993546.composecomposer.PageInfo
 import com.louis993546.composecomposer.data.model.Page
+import com.louis993546.composecomposer.data.model.PageInfo
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.sqldelight.runtime.coroutines.asFlow
@@ -11,10 +11,13 @@ import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Instant
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
+import com.louis993546.composecomposer.PageInfo as DaoPageInfo
 
 /**
  * TODO maybe it would be better to return some Result type instead of "null when failed"
@@ -26,6 +29,8 @@ interface PageRepository {
     fun getPageInfoListFLow(): Flow<List<PageInfo>>
 
     suspend fun getPage(pageInfo: PageInfo): Page?
+
+    suspend fun createPage(page: Page): Page?
 
     suspend fun savePage(page: Page): Page?
 
@@ -44,6 +49,7 @@ class FilePageRepository(
         database.pageInfoQueries
             .selectAll()
             .executeAsList()
+            .map { it.toPageInfo() }
     }
 
     override fun getPageInfoListFLow(): Flow<List<PageInfo>> = database
@@ -51,44 +57,49 @@ class FilePageRepository(
         .selectAll()
         .asFlow()
         .mapToList()
+        .map { list -> list.map { dao -> dao.toPageInfo() } }
 
+    /**
+     * TODO if necessary, try-catch IOException from File
+     */
     override suspend fun getPage(pageInfo: PageInfo) = withContext(dispatcher) {
-        try {
-            val json = File(context.filesDir, pageInfo.fileName).readText()
-            pageAdapter.fromJson(json)
-        } catch (e: IOException) {
-            Timber.e(e)
-            null
-        }
+        val json = File(context.filesDir, pageInfo.fileName).readText()
+        pageAdapter.fromJson(json)
     }
 
+    /**
+     * TODO if necessary, try-catch IOException from File
+     */
+    override suspend fun createPage(page: Page): Page? = withContext(dispatcher) {
+        val json = pageAdapter.toJson(page)
+        File(context.filesDir, page.fileName).writeText(json)
+        database.pageInfoQueries.createPage(page.info.name)
+        page
+    }
+
+    /**
+     * TODO if necessary, try-catch IOException from File
+     */
     override suspend fun savePage(page: Page) = withContext(dispatcher) {
         val json = pageAdapter.toJson(page)
         Timber.d("raw json: $json")
-        try {
-            File(context.filesDir, page.fileName).writeText(json)
-            database.pageInfoQueries.savePage(page.id.toLong(), page.name)
-            page
-        } catch (e: IOException) {
-            Timber.e(e)
-            null
-        }
+        File(context.filesDir, page.fileName).writeText(json)
+        database.pageInfoQueries.updatePage(
+            name = page.info.name,
+            id = page.info.id.toLong(),
+        )
+        page
     }
 
+    /**
+     * TODO if necessary, try-catch IOException and SecurityException from File
+     */
     override suspend fun deletePage(page: Page) = withContext(dispatcher) {
-        try {
-            if (File(context.filesDir, page.fileName).delete()) {
-                database.pageInfoQueries.deletePage(page.id.toLong())
-                page
-            } else {
-                null
-            }
-        } catch (e: IOException) {
-            Timber.e(e)
+        if (File(context.filesDir, page.fileName).delete()) {
+            database.pageInfoQueries.deletePage(page.info.id.toLong())
+            page
+        } else {
             null
-        } catch (e: SecurityException) {
-            Timber.e(e)
-            error("Why am I getting this for just accessing internal storage?")
         }
     }
 }
@@ -97,4 +108,13 @@ private val PageInfo.fileName
     get() = "$id.json"
 
 private val Page.fileName
-    get() = "$id.json"
+    get() = "${info.id}.json"
+
+private fun DaoPageInfo.toPageInfo(): PageInfo {
+    return PageInfo(
+        id = id.toInt(),
+        name = name,
+        createdAt = Instant.parse(created_at),
+        lastUpdateAt = last_updated_at?.let { Instant.parse(it) }
+    )
+}

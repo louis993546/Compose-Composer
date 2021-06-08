@@ -4,10 +4,10 @@ import android.content.Context
 import com.louis993546.composecomposer.App
 import com.louis993546.composecomposer.BuildConfig
 import com.louis993546.composecomposer.Database
-import com.louis993546.composecomposer.MainActivity
 import com.louis993546.composecomposer.data.FilePageRepository
 import com.louis993546.composecomposer.data.adapter.ColorMoshiAdapter
 import com.louis993546.composecomposer.data.adapter.DpMoshiAdapter
+import com.louis993546.composecomposer.data.adapter.InstantMoshiAdapter
 import com.louis993546.composecomposer.data.settings.DataStoreSettingsRepository
 import com.louis993546.composecomposer.data.settings.settingsStore
 import com.louis993546.composecomposer.ui.editor.EditorScreenDependencies
@@ -25,6 +25,7 @@ object ManualInjector : Injector {
         Moshi.Builder()
             .addAdapter(DpMoshiAdapter())
             .addAdapter(ColorMoshiAdapter())
+            .addAdapter(InstantMoshiAdapter())
             .build()
     }
 

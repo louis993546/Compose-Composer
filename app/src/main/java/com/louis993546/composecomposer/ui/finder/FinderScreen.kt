@@ -16,11 +16,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.louis993546.composecomposer.PageInfo
 import com.louis993546.composecomposer.R
 import com.louis993546.composecomposer.Screen
 import com.louis993546.composecomposer.data.PageRepository
 import com.louis993546.composecomposer.data.defaultPage
+import com.louis993546.composecomposer.data.model.PageInfo
 import com.louis993546.composecomposer.di.Injector
 import com.louis993546.composecomposer.ui.components.VerticalDivider
 import kotlinx.coroutines.launch
@@ -47,26 +47,25 @@ fun FinderScreen(
     Scaffold(
         modifier = modifier,
         topBar = { TopBar() },
-        // TODO I want this to only be visible on LHS, but apparently nesting Scaffold will break
-        //   the width of the LHS
-        floatingActionButton = { NewFileButton(onClick = onNewFileClick) },
     ) { innerPadding ->
         // TODO for smaller device, make the detail some kind of dismiss-able popup instead
-
         Row(
             modifier = Modifier.padding(innerPadding),
         ) {
-            LazyColumn(
+            Scaffold(
                 modifier = Modifier.weight(1f),
-            ) {
-                items(pageInfoList, key = { it.id }) { pageInfo ->
-                    PageInfoItem(
-                        modifier = Modifier.clickable {
-                            // TODO pass in the id, and let editor open the file
-                            navController.navigate(Screen.Editor.name)
-                        },
-                        pageInfo = pageInfo
-                    )
+                floatingActionButton = { NewFileButton(onClick = onNewFileClick) },
+            ){
+                LazyColumn(modifier = Modifier.padding(it)) {
+                    items(pageInfoList, key = { it.id }) { pageInfo ->
+                        PageInfoItem(
+                            modifier = Modifier.clickable {
+                                // TODO pass in the id, and let editor open the file
+                                navController.navigate(Screen.Editor.name)
+                            },
+                            pageInfo = pageInfo
+                        )
+                    }
                 }
             }
             VerticalDivider()

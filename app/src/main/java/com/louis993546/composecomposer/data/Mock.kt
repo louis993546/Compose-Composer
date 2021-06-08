@@ -4,12 +4,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.louis993546.composecomposer.data.model.Node
 import com.louis993546.composecomposer.data.model.Page
+import com.louis993546.composecomposer.data.model.PageInfo
 import com.louis993546.composecomposer.util.randId
+import kotlinx.datetime.Clock
 
 val defaultPage =
     Page(
-        id = randId(),
-        name = "default page",
+        info = PageInfo(
+            id = randId(),
+            name = "default page",
+            createdAt = Clock.System.now(),
+            lastUpdateAt = null
+        ),
         width = 360.dp,
         height = 640.dp,
         backgroundColor = Color.Gray,

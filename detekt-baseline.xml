@@ -3,11 +3,6 @@
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
     <ID>LongMethod:Tree.kt$ @Composable fun Tree( modifier: Modifier = Modifier, node: Node, onNodeSelected: (Node) -&gt; Unit, )</ID>
-    <ID>LongParameterList:MainActivity.kt$( modifier: Modifier = Modifier, panels: List&lt;Panel&gt;, page: Page, currentlySelectedNode: Node?, onNodeSelected: (Node) -&gt; Unit, onNodeModified: (Node) -&gt; Unit, )</ID>
-    <ID>MagicNumber:Color.kt$0xFF03DAC5</ID>
-    <ID>MagicNumber:Color.kt$0xFF3700B3</ID>
-    <ID>MagicNumber:Color.kt$0xFF6200EE</ID>
-    <ID>MagicNumber:Color.kt$0xFFBB86FC</ID>
     <ID>MagicNumber:Util.kt$411</ID>
     <ID>MagicNumber:Util.kt$800</ID>
     <ID>UnusedPrivateMember:NodeRenderer.kt$columnScope: ColumnScope? = null</ID>
