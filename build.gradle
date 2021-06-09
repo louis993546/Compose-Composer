@@ -3,7 +3,7 @@ buildscript {
     ext {
         compose_version = "1.0.0-beta08"
         sqldelight_version = "1.5.0"
-        protobuf_version = "3.17.2"
+        protobuf_version = "3.17.3"
         accompanist_version = "0.11.1"
     }
     repositories {
