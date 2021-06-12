@@ -22,6 +22,7 @@ import com.louis993546.composecomposer.data.PageRepository
 import com.louis993546.composecomposer.data.defaultPage
 import com.louis993546.composecomposer.data.model.PageInfo
 import com.louis993546.composecomposer.di.Injector
+import com.louis993546.composecomposer.navigate
 import com.louis993546.composecomposer.ui.components.VerticalDivider
 import kotlinx.coroutines.launch
 
@@ -61,7 +62,7 @@ fun FinderScreen(
                         PageInfoItem(
                             modifier = Modifier.clickable {
                                 // TODO pass in the id, and let editor open the file
-                                navController.navigate(Screen.Editor.name)
+                                navController.navigate(Screen.Editor)
                             },
                             pageInfo = pageInfo
                         )

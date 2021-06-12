@@ -11,12 +11,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.louis993546.composecomposer.R
+import com.louis993546.composecomposer.Screen
 import com.louis993546.composecomposer.data.PageRepository
 import com.louis993546.composecomposer.data.defaultPage
 import com.louis993546.composecomposer.data.model.Node
 import com.louis993546.composecomposer.data.model.Page
 import com.louis993546.composecomposer.data.settings.SettingsRepository
 import com.louis993546.composecomposer.di.Injector
+import com.louis993546.composecomposer.navigate
 import com.louis993546.composecomposer.ui.components.VerticalDivider
 import com.louis993546.composecomposer.ui.editor.properties.Properties
 import com.louis993546.composecomposer.ui.editor.renderer.PageRenderer
@@ -56,7 +58,7 @@ fun EditorScreen(
                     // TODO need to show warning dialog first
                     // navController.popBackStack()
 
-                    navController.navigate("test")
+                    navController.navigate(Screen.Finder)
                 }
             )
         }

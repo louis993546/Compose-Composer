@@ -4,11 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -66,4 +66,11 @@ class MainActivity : ComponentActivity() {
 enum class Screen {
     Finder,
     Editor
+}
+
+/**
+ * TODO write a lint that forces me to use this navigate, instead of the string/resId navigate
+ */
+fun NavController.navigate(screen: Screen) {
+    this.navigate(screen.name)
 }
