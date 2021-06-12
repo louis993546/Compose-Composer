@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
+import app.cash.exhaustive.Exhaustive
 import com.louis993546.composecomposer.R
 import com.louis993546.composecomposer.Screen
 import com.louis993546.composecomposer.data.PageRepository
@@ -23,7 +24,6 @@ import com.louis993546.composecomposer.ui.components.VerticalDivider
 import com.louis993546.composecomposer.ui.editor.properties.Properties
 import com.louis993546.composecomposer.ui.editor.renderer.PageRenderer
 import com.louis993546.composecomposer.ui.editor.tree.Tree
-import com.louis993546.composecomposer.util.exhaustive
 import com.louis993546.composecomposer.util.isPhabletSize
 import com.louis993546.composecomposer.util.isPhoneSize
 import com.louis993546.composecomposer.util.isTabletSize
@@ -133,6 +133,7 @@ fun TabletBody(
 ) {
     Row(modifier = modifier) {
         panels.forEachIndexed { index, panel ->
+            @Exhaustive
             when (panel) {
                 Panel.Tree ->
                     Page(
@@ -151,7 +152,7 @@ fun TabletBody(
                         node = currentlySelectedNode,
                         onNodeModified = onNodeModified,
                     )
-            }.exhaustive
+            }
             if (index < panels.size) VerticalDivider()
         }
     }

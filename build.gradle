@@ -14,9 +14,10 @@ buildscript {
         maven { url "https://jetbrains.bintray.com/intellij-third-party-dependencies" }
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:7.1.0-alpha02"
+        classpath "app.cash.exhaustive:exhaustive-gradle:0.1.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10"
         classpath "com.squareup.sqldelight:gradle-plugin:$sqldelight_version"
+        classpath "com.android.tools.build:gradle:7.1.0-alpha02"
     }
 }
 

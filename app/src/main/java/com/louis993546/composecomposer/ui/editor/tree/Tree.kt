@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import app.cash.exhaustive.Exhaustive
 import com.louis993546.composecomposer.R
 import com.louis993546.composecomposer.data.model.Node
-import com.louis993546.composecomposer.util.exhaustive
 
 /**
  * TODO
@@ -22,6 +22,7 @@ fun Tree(
     onNodeSelected: (Node) -> Unit,
 ) {
     Box(modifier = modifier) {
+        @Exhaustive
         when (node) {
             is Node.Checkbox ->
                 NodeDescription(
@@ -91,6 +92,6 @@ fun Tree(
                     contentDescription = "Text Button",
                     text = node.text,
                 )
-        }.exhaustive
+        }
     }
 }
