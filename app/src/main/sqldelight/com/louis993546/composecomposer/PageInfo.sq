@@ -1,5 +1,5 @@
 CREATE TABLE pageInfo(
-    id                  INTEGER     PRIMARY KEY     AUTOINCREMENT,
+    id                  INTEGER     PRIMARY KEY     AUTOINCREMENT, -- TODO maybe I should manually provide UUID instead? that puts all the logic back into the code
     name                TEXT        NOT NULL,
     created_at          TEXT        NOT NULL,
     last_updated_at     TEXT

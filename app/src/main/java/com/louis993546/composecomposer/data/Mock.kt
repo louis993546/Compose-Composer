@@ -5,10 +5,26 @@ import androidx.compose.ui.unit.dp
 import com.louis993546.composecomposer.data.model.Node
 import com.louis993546.composecomposer.data.model.Page
 import com.louis993546.composecomposer.data.model.PageInfo
+import com.louis993546.composecomposer.util.placeholderId
 import com.louis993546.composecomposer.util.randId
 import kotlinx.datetime.Clock
 
-val defaultPage =
+val defaultPage = Page(
+    info = PageInfo(
+        id = placeholderId(),
+        name = "New File",
+        createdAt = Clock.System.now(),
+        lastUpdateAt = null,
+    ),
+    width = 360.dp,
+    height = 640.dp,
+    backgroundColor = Color.White,
+    node = Node.Column(
+        children = emptyList()
+    )
+)
+
+val oldDefaultPage =
     Page(
         info = PageInfo(
             id = randId(),

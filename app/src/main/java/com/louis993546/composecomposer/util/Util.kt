@@ -18,6 +18,11 @@ import kotlin.random.Random
 )
 fun randId(): Int = Random.nextInt()
 
+/**
+ * Page ID will be created by DB to ensure uniqueness, so this
+ */
+fun placeholderId(): Int = -1
+
 val <T> T.exhaustive: T
     get() = this
 
