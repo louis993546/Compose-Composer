@@ -1,9 +1,11 @@
 plugins {
+    id "app.cash.exhaustive"
     id "com.android.application"
+    id "com.google.protobuf" version "0.8.16"
+    id "com.squareup.sqldelight"
     id "kotlin-android"
     id "org.jetbrains.kotlin.kapt"
-    id "com.squareup.sqldelight"
-    id "com.google.protobuf" version "0.8.16"
+    id "org.jetbrains.kotlin.android"
 }
 
 android {

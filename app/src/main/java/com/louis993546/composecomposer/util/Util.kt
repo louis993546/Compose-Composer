@@ -23,9 +23,6 @@ fun randId(): Int = Random.nextInt()
  */
 fun placeholderId(): Int = -1
 
-val <T> T.exhaustive: T
-    get() = this
-
 fun Configuration.isPhoneSize(): Boolean = screenWidthDp <= 411
 
 fun Configuration.isPhabletSize(): Boolean = screenWidthDp <= 800
