@@ -1,4 +1,4 @@
-package com.louis993546.composecomposer.ui.tree
+package com.louis993546.composecomposer.ui.editor.tree
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Row

@@ -1,4 +1,4 @@
-package com.louis993546.composecomposer.ui.renderer
+package com.louis993546.composecomposer.ui.editor.renderer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -8,9 +8,9 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import app.cash.exhaustive.Exhaustive
 import com.google.accompanist.glide.rememberGlidePainter
 import com.louis993546.composecomposer.data.model.Node
-import com.louis993546.composecomposer.util.exhaustive
 
 @Composable
 fun NodeRenderer(
@@ -20,6 +20,7 @@ fun NodeRenderer(
     columnScope: ColumnScope? = null,
 ) {
     Box(modifier = modifier) {
+        @Exhaustive
         when (node) {
             is Node.Checkbox -> CheckboxNode(node = node)
             is Node.Column -> ColumnNode(node = node)
@@ -28,7 +29,7 @@ fun NodeRenderer(
             is Node.Row -> RowNode(node = node)
             is Node.Text -> TextNode(node = node)
             is Node.TextButton -> TextButtonNode(node = node)
-        }.exhaustive
+        }
     }
 }
 

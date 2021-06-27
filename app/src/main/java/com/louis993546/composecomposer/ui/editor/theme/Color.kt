@@ -1,4 +1,5 @@
-package com.louis993546.composecomposer.ui.theme
+@file:Suppress("MagicNumber")
+package com.louis993546.composecomposer.ui.editor.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,9 +1,11 @@
 plugins {
+    id "app.cash.exhaustive"
     id "com.android.application"
+    id "com.google.protobuf" version "0.8.16"
+    id "com.squareup.sqldelight"
     id "kotlin-android"
     id "org.jetbrains.kotlin.kapt"
-    id "com.squareup.sqldelight"
-    id "com.google.protobuf" version "0.8.16"
+    id "org.jetbrains.kotlin.android"
 }
 
 android {
@@ -20,9 +22,14 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary true
+
+        multiDexEnabled true
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
@@ -30,6 +37,8 @@ android {
     }
 
     compileOptions {
+        coreLibraryDesugaringEnabled true
+
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -103,9 +112,16 @@ dependencies {
     implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
     implementation "com.google.accompanist:accompanist-insets:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
+    //endregion
+
+    //region kotlinx datetime
+    implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.2.1"
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.5"
     //endregion
 
     implementation "com.squareup.sqldelight:android-driver:$sqldelight_version"
+    implementation "com.squareup.sqldelight:coroutines-extensions:$sqldelight_version"
     implementation "com.jakewharton.timber:timber:4.7.1"
 
     testImplementation "junit:junit:4.13.2"

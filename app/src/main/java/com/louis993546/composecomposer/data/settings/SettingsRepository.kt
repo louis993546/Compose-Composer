@@ -6,9 +6,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.Serializer
 import androidx.datastore.dataStore
 import com.google.protobuf.InvalidProtocolBufferException
-import com.louis993546.composecomposer.Panel
 import com.louis993546.composecomposer.PanelOrder
 import com.louis993546.composecomposer.Settings
+import com.louis993546.composecomposer.ui.editor.Panel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map

@@ -1,4 +1,4 @@
-package com.louis993546.composecomposer.ui.properties
+package com.louis993546.composecomposer.ui.editor.properties
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.TextField

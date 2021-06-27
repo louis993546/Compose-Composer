@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.louis993546.composecomposer.ui.theme.ComposeComposerTheme
+import com.louis993546.composecomposer.ui.editor.theme.ComposeComposerTheme
 import kotlin.random.Random
 
 @Suppress("DeprecatedCallableAddReplaceWith")
@@ -18,8 +18,10 @@ import kotlin.random.Random
 )
 fun randId(): Int = Random.nextInt()
 
-val <T> T.exhaustive: T
-    get() = this
+/**
+ * Page ID will be created by DB to ensure uniqueness, so this
+ */
+fun placeholderId(): Int = -1
 
 fun Configuration.isPhoneSize(): Boolean = screenWidthDp <= 411
 
