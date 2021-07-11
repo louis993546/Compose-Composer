@@ -2,6 +2,10 @@
 
 Create simple Android app right from your Android tablet in GUI
 
+Open testing right now!
+
+<a href='https://play.google.com/store/apps/details?id=com.louis993546.composecomposer&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="200"/></a>
+
 ## Features
 
 - [ ] Dynamically add/edit/remove UI (e.g. Text, Image, List, Checkbox, etc.)
